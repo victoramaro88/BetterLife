@@ -67,10 +67,14 @@ namespace MinhaApi.Controllers
         {
             try
             {
+                tipoDocumento.TidCodi = (short)(_context.TipoDocumentos
+                    .OrderByDescending(lastId => lastId)
+                    .Select(lastId => lastId.TidCodi)
+                    .FirstOrDefault() + 1);
+
                 _context.TipoDocumentos.Add(tipoDocumento);
                 var retorno = await _context.SaveChangesAsync();
 
-                //return CreatedAtAction(nameof(GetTipoDocumento), new { id = tipoDocumento.TidCodi }, tipoDocumento);
                 return Ok(tipoDocumento);
             }
             catch (Exception ex)
@@ -81,7 +85,7 @@ namespace MinhaApi.Controllers
 
         // PUT: api/TipoDocumentos/5
         [HttpPut("{tidCodi}")]
-        public async Task<IActionResult> PutTipoDocumento(int tidCodi, TipoDocumento tipoDocumento)
+        public async Task<IActionResult> PutTipoDocumento(short tidCodi, TipoDocumento tipoDocumento)
         {
             if (tidCodi != tipoDocumento.TidCodi)
             {

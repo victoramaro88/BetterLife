@@ -107,6 +107,10 @@ namespace API_BetterLife.Models
                     .IsUnicode(false)
                     .HasColumnName("conDesc");
 
+                entity.Property(e => e.ConFoto)
+                    .IsUnicode(false)
+                    .HasColumnName("conFoto");
+
                 entity.Property(e => e.ConStat).HasColumnName("conStat");
             });
 
