@@ -1,0 +1,10 @@
+.floating-div {
+  position: absolute; /* Remove do fluxo normal e posiciona de forma absoluta */
+  top: 50px;
+  left: 50%;
+  transform: translateX(-50%); /* Centraliza horizontalmente */
+  z-index: 2;
+  padding: 10px;
+  text-align: center;
+  color: white;
+}
