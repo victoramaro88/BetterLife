@@ -39,18 +39,26 @@ namespace API_BetterLife.Controllers
                                 on carteira.PecCodi equals pessoaCons.PecCodi
                                 join consultorio in context.Consultorios
                                 on pessoaCons.ConCodi equals consultorio.ConCodi
+                                join medico in context.Pessoas
+                                on pessoaCons.PesCodi equals medico.PesCodi
+                                join crm in context.Documentos
+                                on medico.PesCodi equals crm.PesCodi
                                 join documento in context.Documentos
                                 on pessoa.PesCodi equals documento.PesCodi
-                                where pessoa.PesCodi == pesCodi && documento.TidCodi == 1
+                                where pessoa.PesCodi == pesCodi && documento.TidCodi == 1 && crm.TidCodi == 2
                                 select new
                                 {
                                     carteira.CarCodi,
                                     pessoa.PesNome,
                                     documento.DocNume,
+                                    medicoNome = medico.PesNome,
+                                    crmMedico = crm.DocNume,
                                     tipoCirurgia.TpcDesc,
                                     hosp.HosDesc,
                                     consultorio.ConDesc,
+                                    carteira.CarDtCi,
                                     pessoa.PesFoto,
+                                    consultorio.ConFoto
                                 };
 
                     var result = query.ToList();
