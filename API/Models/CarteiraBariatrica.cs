@@ -11,6 +11,7 @@ namespace API_BetterLife.Models
         public int HosCodi { get; set; }
         public long PesCodi { get; set; }
         public int PecCodi { get; set; }
+        public bool CarStat { get; set; }
 
         public virtual Hospital HosCodiNavigation { get; set; } = null!;
         public virtual PessoaConsultorio PecCodiNavigation { get; set; } = null!;

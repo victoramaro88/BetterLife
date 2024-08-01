@@ -58,6 +58,8 @@ namespace API_BetterLife.Models
                     .HasColumnType("date")
                     .HasColumnName("carDtCi");
 
+                entity.Property(e => e.CarStat).HasColumnName("carStat");
+
                 entity.Property(e => e.HosCodi).HasColumnName("hosCodi");
 
                 entity.Property(e => e.PecCodi).HasColumnName("pecCodi");
