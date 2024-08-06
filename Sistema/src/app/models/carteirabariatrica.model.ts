@@ -1,13 +1,13 @@
 export interface CarteiraBariatricaModel {
-    CarCodi: number;
-    PesNome: string;
-    DocNume: string;
+    carCodi: number;
+    pesNome: string;
+    docNume: string;
     medicoNome: string;
     crmMedico: string;
-    TpcDesc: string;
-    HosDesc: string;
-    ConDesc: string;
-    CarDtCi: string;
-    PesFoto: string;
-    ConFoto: string;
+    tpcDesc: string;
+    hosDesc: string;
+    conDesc: string;
+    carDtCi: string;
+    pesFoto: string;
+    conFoto: string;
 }

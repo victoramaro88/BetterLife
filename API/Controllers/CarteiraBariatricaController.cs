@@ -48,22 +48,22 @@ namespace API_BetterLife.Controllers
                                 where pessoa.PesCodi == pesCodi && documento.TidCodi == 1 && crm.TidCodi == 2
                                 select new
                                 {
-                                    carteira.CarCodi,
-                                    pessoa.PesNome,
-                                    documento.DocNume,
+                                    carCodi = carteira.CarCodi,
+                                    pesNome = pessoa.PesNome,
+                                    docNume = documento.DocNume,
                                     medicoNome = medico.PesNome,
                                     crmMedico = crm.DocNume,
-                                    tipoCirurgia.TpcDesc,
-                                    hosp.HosDesc,
-                                    consultorio.ConDesc,
-                                    carteira.CarDtCi,
-                                    pessoa.PesFoto,
-                                    consultorio.ConFoto
+                                    tpcDesc = tipoCirurgia.TpcDesc,
+                                    hosDesc = hosp.HosDesc,
+                                    conDesc = consultorio.ConDesc,
+                                    carDtCi = carteira.CarDtCi,
+                                    pesFoto = pessoa.PesFoto,
+                                    conFoto = consultorio.ConFoto
                                 };
 
-                    var result = query.ToList();
+                    var result = query.FirstOrDefault();
 
-                    if (result.Count > 0)
+                    if (result != null)
                     {
                         return Task.FromResult<ActionResult<IEnumerable<CarteiraBariatrica>>>(Ok(result));
                     }
