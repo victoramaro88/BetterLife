@@ -12,8 +12,8 @@ export class HttpService {
 
     constructor(private http: HttpClient) { }
 
-    public GetCarteira(pesCodi: number): Observable<CarteiraBariatricaModel> {
-        return this.http.get<CarteiraBariatricaModel>(`${environment.apiServicos}/CarteiraBariatrica/${pesCodi}`);
+    public GetCarteira(docNume: string): Observable<CarteiraBariatricaModel> {
+        return this.http.get<CarteiraBariatricaModel>(`${environment.apiServicos}/CarteiraBariatrica/${docNume}`);
     }
 
 }

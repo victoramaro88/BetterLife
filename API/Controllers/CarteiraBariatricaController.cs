@@ -21,8 +21,8 @@ namespace API_BetterLife.Controllers
             return Ok(await _context.CarteiraBariatricas.ToListAsync());
         }
 
-        [HttpGet("{pesCodi}")]
-        public Task<ActionResult<IEnumerable<CarteiraBariatrica>>> GetCarteira(long pesCodi)
+        [HttpGet("{docNume}")]
+        public Task<ActionResult<IEnumerable<CarteiraBariatrica>>> GetCarteira(string docNume)
         {
             try
             {
@@ -45,7 +45,8 @@ namespace API_BetterLife.Controllers
                                 on medico.PesCodi equals crm.PesCodi
                                 join documento in context.Documentos
                                 on pessoa.PesCodi equals documento.PesCodi
-                                where pessoa.PesCodi == pesCodi && documento.TidCodi == 1 && crm.TidCodi == 2
+                                //where pessoa.PesCodi == pesCodi && documento.TidCodi == 1 && crm.TidCodi == 2
+                                where documento.DocNume == docNume && documento.TidCodi == 1 && crm.TidCodi == 2
                                 select new
                                 {
                                     carCodi = carteira.CarCodi,

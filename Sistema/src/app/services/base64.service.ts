@@ -16,4 +16,14 @@ export class Base64Service {
     const decodedString = atob(base64);
     return parseFloat(decodedString);
   }
+
+  convertStringToBase64(str: string): string {
+    const strRet = str.toString();
+    return btoa(strRet);
+  }
+
+  decodeBase64ToString(base64: string): string {
+    const decodedString = atob(base64);
+    return decodedString;
+  }
 }

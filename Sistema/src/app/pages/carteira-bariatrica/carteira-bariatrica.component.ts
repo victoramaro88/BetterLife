@@ -5,6 +5,7 @@ import { HttpService } from '../../services/http-service.service';
 import { CarteiraBariatricaModel } from '../../models/carteirabariatrica.model';
 import { ActivatedRoute } from '@angular/router';
 import { Base64Service } from '../../services/base64.service';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-carteira-bariatrica',
@@ -16,10 +17,10 @@ import { Base64Service } from '../../services/base64.service';
 export class CarteiraBariatricaComponent implements OnInit {
 
   isFlipped: boolean = false;
-  qrData = 'https://www.google.com.br';
+  qrData = '';
   qrCodeImage: string | undefined;
   objCarteira: CarteiraBariatricaModel | undefined;
-  pesCodi: number = 0;
+  docNume: string = '';
 
   constructor(
     private qrCodeService: QRCodeService
@@ -30,22 +31,15 @@ export class CarteiraBariatricaComponent implements OnInit {
 
   ngOnInit(): void {
     this.route.queryParams.subscribe(params => {
-      this.pesCodi = params['data'];
+      this.docNume = params['data'];
     });
-    console.log(this.pesCodi);
 
-    let originalNumber: number = this.pesCodi;
-    let base64String: string = '';
-    let decodedNumber: number = 0;
-    base64String = this.base64Service.convertNumberToBase64(originalNumber);
-    decodedNumber = this.base64Service.decodeBase64ToNumber(base64String);
-    console.warn('NÚMERO ORIGINAL: ', originalNumber);
-    console.warn('NÚMERO CONVERTIDO: ', base64String);
-    console.warn('NÚMERO DECODIFICADO: ', decodedNumber);
+    if (this.docNume) {
+      this.GetCarteira(this.base64Service.decodeBase64ToString(this.docNume));
+    }
 
-    this.GetCarteira(this.pesCodi);
-    // this.GetCarteira(1);
-
+    //-> Montando o QR-Code da carteira
+    this.qrData = environment.urlValidaCarteira + this.docNume;
     this.qrCodeService.generateQRCode(this.qrData).then(qrCode => {
       this.qrCodeImage = qrCode;
     }).catch(error => {
@@ -53,12 +47,10 @@ export class CarteiraBariatricaComponent implements OnInit {
     });
   }
 
-  GetCarteira(pesCodi: number) {
-    this.http.GetCarteira(pesCodi).subscribe({
+  GetCarteira(docNume: string) {
+    this.http.GetCarteira(docNume).subscribe({
       next: (response) => {
-        // console.warn("Retorno:", response);
         this.objCarteira = response;
-        // console.warn("Retorno:", this.objCarteira);
 
         // this.visualizarArquivo = true;
         // this.boolLoading = false;

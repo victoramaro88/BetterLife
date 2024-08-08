@@ -15,7 +15,7 @@ export class ValidaCarteiraComponent implements OnInit {
   ngOnInit(): void {
     this.route.params.subscribe(params => {
       const param = params['param'];
-      this.router.navigate(['/carteira'], { queryParams: { data: param } });
+      //this.router.navigate(['/carteira'], { queryParams: { data: param } });
     });
   }
 }
