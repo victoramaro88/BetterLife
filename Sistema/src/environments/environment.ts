@@ -3,9 +3,10 @@ export const environment = {
 
   version: '1.0.0 | 16/07/2024-06:33 | Localhost',
 
-  // apiServicos: "http://localhost:5226/api",
-  apiServicos: "https://www.victoramaro.com.br/BetterLife/_API/api",
-  urlValidaCarteira: "http://localhost:4200/valida/"
+  apiServicos: "http://localhost:5226/api",
+  // apiServicos: "https://www.victoramaro.com.br/BetterLife/_API/api",
+  // urlValidaCarteira: "http://localhost:4200/valida/"
+  urlValidaCarteira: "https://www.victoramaro.com.br/BetterLife/valida/"
 };
 
 /*-> INFORMAÇÕES SOBRE LINKS PARA VALIDAR CARTEIRA:

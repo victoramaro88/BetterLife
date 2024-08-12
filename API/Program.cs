@@ -5,6 +5,17 @@ using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowSpecificOrigin",
+        builder => builder
+            .WithOrigins("http://localhost:4200"
+                        , "*"
+                        )
+            .AllowAnyHeader()
+            .AllowAnyMethod());
+});
+
 var connectionString = builder.Configuration.GetConnectionString("CONEXAO_BD");
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(connectionString));
@@ -23,16 +34,9 @@ builder.Services.AddEndpointsApiExplorer();
 
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy("AllowSpecificOrigin",
-        builder => builder
-            .WithOrigins("http://localhost:4200", "*")
-            .AllowAnyHeader()
-            .AllowAnyMethod());
-});
-
 var app = builder.Build();
+
+app.UseCors("AllowAngularClient");
 
 if (app.Environment.IsDevelopment())
 {
@@ -50,8 +54,6 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.UseHttpsRedirection();
-
-app.UseCors("AllowAngularClient");
 
 app.UseMiddleware<ExceptionMiddleware>();
 

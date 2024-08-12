@@ -45,7 +45,6 @@ namespace API_BetterLife.Controllers
                                 on medico.PesCodi equals crm.PesCodi
                                 join documento in context.Documentos
                                 on pessoa.PesCodi equals documento.PesCodi
-                                //where pessoa.PesCodi == pesCodi && documento.TidCodi == 1 && crm.TidCodi == 2
                                 where documento.DocNume == docNume && documento.TidCodi == 1 && crm.TidCodi == 2
                                 select new
                                 {

@@ -6,7 +6,7 @@ import { ButtonModule } from 'primeng/button';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NgxMaskDirective, provideNgxMask } from 'ngx-mask';
 import { CpfMaskPipe } from './services/cpf-mask.pipe';
-
+import { BlockUIModule } from 'primeng/blockui';
 
 @NgModule({
   imports: [
@@ -16,6 +16,7 @@ import { CpfMaskPipe } from './services/cpf-mask.pipe';
     ReactiveFormsModule,
     NgxMaskDirective,
     CpfMaskPipe,
+    BlockUIModule
   ],
   exports: [
     CommonModule,
@@ -23,7 +24,8 @@ import { CpfMaskPipe } from './services/cpf-mask.pipe';
     FormsModule,
     ReactiveFormsModule,
     NgxMaskDirective,
-    CpfMaskPipe
+    CpfMaskPipe,
+    BlockUIModule
   ],
   providers: [provideNgxMask()]
 })

@@ -21,6 +21,7 @@ export class CarteiraBariatricaComponent implements OnInit {
   qrCodeImage: string | undefined;
   objCarteira: CarteiraBariatricaModel | undefined;
   docNume: string = '';
+  blockLoading: boolean = true;
 
   constructor(
     private qrCodeService: QRCodeService
@@ -52,8 +53,7 @@ export class CarteiraBariatricaComponent implements OnInit {
       next: (response) => {
         this.objCarteira = response;
 
-        // this.visualizarArquivo = true;
-        // this.boolLoading = false;
+        this.blockLoading = false;
       },
       error: (error) => {
         console.error('Erro ao carregar dados:', error);
