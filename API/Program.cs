@@ -10,7 +10,7 @@ builder.Services.AddCors(options =>
     options.AddPolicy("AllowSpecificOrigin",
         builder => builder
             .WithOrigins("http://localhost:4200"
-                        , "*"
+                        , "https://www.victoramaro.com.br/"
                         )
             .AllowAnyHeader()
             .AllowAnyMethod());
@@ -36,7 +36,7 @@ builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
-app.UseCors("AllowAngularClient");
+app.UseCors("AllowSpecificOrigin");
 
 if (app.Environment.IsDevelopment())
 {
@@ -49,11 +49,11 @@ else
     app.UseExceptionHandler("/error");
 }
 
+app.UseHttpsRedirection();
+
 app.UseAuthorization();
 
 app.MapControllers();
-
-app.UseHttpsRedirection();
 
 app.UseMiddleware<ExceptionMiddleware>();
 

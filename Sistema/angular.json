@@ -25,7 +25,8 @@
                 "glob": "**/*",
                 "input": "public",
                 "output": "/assets"
-              }
+              },
+              "src/web.config"
             ],
             "styles": [
               "node_modules/primeng/resources/themes/lara-light-blue/theme.css",
