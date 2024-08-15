@@ -19,6 +19,6 @@ localhost:4200/valida/<CPF_Base64>
 
 
 /*
-http://localhost:4200/valida/MTIzNDU2Nzg5MDA=
 http://localhost:4200/carteira?data=MTIzNDU2Nzg5MDA%3D
+http://localhost:4200/valida?data=MTIzNDU2Nzg5MDA%3D
 */

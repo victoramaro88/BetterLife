@@ -2,12 +2,13 @@ import { ValidaCarteiraComponent } from './pages/valida-carteira/valida-carteira
 import { RouterModule, Routes } from '@angular/router';
 import { CarteiraBariatricaComponent } from './pages/carteira-bariatrica/carteira-bariatrica.component';
 import { NgModule } from '@angular/core';
+import { LoginComponent } from './pages/login/login.component';
 
 export const routes: Routes = [
-  { path: 'valida/:param', component: ValidaCarteiraComponent },
+  { path: 'login', component: LoginComponent },
+  { path: 'valida', component: ValidaCarteiraComponent },
   { path: 'carteira', component: CarteiraBariatricaComponent },
-  // { path: 'valida', component: ValidaCarteiraComponent },
-  { path: '**', redirectTo: 'carteira' }
+  { path: '**', redirectTo: 'login' }
 ];
 
 @NgModule({

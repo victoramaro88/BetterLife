@@ -19,9 +19,10 @@ export class CarteiraBariatricaComponent implements OnInit {
   isFlipped: boolean = false;
   qrData = '';
   qrCodeImage: string | undefined;
-  objCarteira: CarteiraBariatricaModel | undefined;
+  objCarteira: CarteiraBariatricaModel = new CarteiraBariatricaModel();
   docNume: string = '';
   blockLoading: boolean = true;
+  mensagemRespCarteira: string = "";
 
   constructor(
     private qrCodeService: QRCodeService
@@ -31,36 +32,45 @@ export class CarteiraBariatricaComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.route.queryParams.subscribe(params => {
-      this.docNume = params['data'];
-    });
+    try {
+      this.mensagemRespCarteira = "Carregando...";
+      this.route.queryParams.subscribe(params => {
+        this.docNume = params['data'];
+      });
 
-    if (this.docNume) {
-      this.GetCarteira(this.base64Service.decodeBase64ToString(this.docNume));
+      if (this.docNume) {
+        this.GetCarteira(this.base64Service.decodeBase64ToString(this.docNume));
+      }
+
+      //-> Montando o QR-Code da carteira
+      this.qrData = environment.urlValidaCarteira + this.docNume;
+      this.qrCodeService.generateQRCode(this.qrData).then(qrCode => {
+        this.qrCodeImage = qrCode;
+      }).catch(error => {
+        console.error('Erro ao gerar QR code:', error);
+      });
+    } catch (error) {
+      this.mensagemRespCarteira = "Carteira Inválida!";
+      this.blockLoading = false;
     }
-
-    //-> Montando o QR-Code da carteira
-    this.qrData = environment.urlValidaCarteira + this.docNume;
-    this.qrCodeService.generateQRCode(this.qrData).then(qrCode => {
-      this.qrCodeImage = qrCode;
-    }).catch(error => {
-      console.error('Erro ao gerar QR code:', error);
-    });
   }
 
   GetCarteira(docNume: string) {
-    this.http.GetCarteira(docNume).subscribe({
-      next: (response) => {
-        this.objCarteira = response;
+    try {
+      this.http.GetCarteira(docNume).subscribe({
+        next: (response) => {
+          this.objCarteira = response;
 
-        this.blockLoading = false;
-      },
-      error: (error) => {
-        console.error('Erro ao carregar dados:', error);
-        // this.msgs = [];
-        // this.messageService.add({severity:'error', summary:'Erro: ', detail: error.message});
-      }
-    });
+          this.blockLoading = false;
+          this.mensagemRespCarteira = "";
+        },
+        error: (error) => {
+          console.error('Erro ao carregar dados:', error);
+        }
+      });
+    } catch (error) {
+      console.error(error);
+    }
   }
 
   toggleFlip() {

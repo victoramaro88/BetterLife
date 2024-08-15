@@ -4,7 +4,7 @@
 
 <div class="card-wrapper">
   <div class="card-container">
-    <div [class]="{'flipped': isFlipped}" class="card-flip">
+    <div *ngIf="mensagemRespCarteira == '' && true ; else elseBlock" [class]="{'flipped': isFlipped}" class="card-flip">
       <div class="card-front">
         <div class="flex flex-column">
           <div class="flex align-items-center justify-content-center">
@@ -12,7 +12,7 @@
             <!-- <img src="{{objCarteira?.conFoto}}" class="mt-3 mb-2" style="width: 60px;" alt="Logo"> -->
           </div>
           <div class="flex align-items-center justify-content-center h-4rem m-2 mt-4 mb-4">
-            <img *ngIf="objCarteira?.pesFoto; else secondImage" [src]="objCarteira?.pesFoto" alt="Foto" class="rounded-image">
+            <img *ngIf="objCarteira?.pesFoto; else secondImage" [src]="objCarteira.pesFoto" alt="Foto" class="rounded-image">
             <ng-template #secondImage>
               <img src="assets/img/User_Profile.png" alt="Sem Foto" class="rounded-image">
             </ng-template>
@@ -24,9 +24,9 @@
           font-bold
           ">
             <p>
-              <a>{{objCarteira?.pesNome}}</a>
+              <a>{{objCarteira.pesNome}}</a>
               <br>
-              <small><a class="mt-2" style="color: rgb(134, 134, 134);">{{objCarteira?.docNume! | cpfMask}}</a></small>
+              <small><a class="mt-2" style="color: rgb(134, 134, 134);">{{objCarteira.docNume! | cpfMask}}</a></small>
             </p>
           </div>
           <div class="flex align-items-center justify-content-center border-round m-2">
@@ -48,9 +48,9 @@
               <strong><a>Médico</a></strong>
               <br>
               <small>
-                <a>{{objCarteira?.medicoNome}}</a>
+                <a>{{objCarteira.medicoNome}}</a>
               <br>
-                <small><a>CRM: {{objCarteira?.crmMedico}}</a></small>
+                <small><a>CRM: {{objCarteira.crmMedico}}</a></small>
               </small>
             </p>
           </div>
@@ -59,7 +59,7 @@
               <strong><a>Tipo de Cirurgia</a></strong>
               <br>
               <small>
-                <a>{{objCarteira?.tpcDesc}}</a>
+                <a>{{objCarteira.tpcDesc}}</a>
               </small>
             </p>
           </div>
@@ -68,7 +68,7 @@
               <strong><a>Hospital</a></strong>
               <br>
               <small>
-                <a>{{objCarteira?.hosDesc}}</a>
+                <a>{{objCarteira.hosDesc}}</a>
               </small>
             </p>
           </div>
@@ -77,7 +77,7 @@
               <strong><a>Realizada em</a></strong>
               <br>
               <small>
-                <a>{{objCarteira?.carDtCi | date:'MM/yyyy'}}</a>
+                <a>{{objCarteira.carDtCi | date:'MM/yyyy'}}</a>
               </small>
             </p>
           </div>
@@ -87,5 +87,13 @@
          </div>
       </div>
     </div>
+
+    <ng-template #elseBlock>
+      <div class="card-front pt-8">
+        <p>{{mensagemRespCarteira}}</p>
+        <br><br>
+        <i *ngIf="mensagemRespCarteira === 'Carteira Inválida!';" class="pi pi-ban" style="color: #708090; font-size: 5.5rem" ></i>
+      </div>
+    </ng-template>
   </div>
 </div>
