@@ -1,0 +1,207 @@
+<p-blockUI [blocked]="blockLoading">
+  <i class="pi pi-spin pi-spinner" style="font-size: 3rem"></i>
+</p-blockUI>
+<p-toast />
+
+<div class="container">
+  <div class="formgrid grid">
+    <!-- NOME -->
+    <div class="field col-12 md:col-8">
+        <label for="nome">Nome</label><br>
+        <input type="text" pInputText [(ngModel)]="objPessoa.pesNome" class="w-full"/>
+    </div>
+    <!-- NASCIMENTO -->
+    <div class="field col-12 md:col-4">
+      <label for="nascimento">Nascimento</label><br>
+      <p-calendar
+      id="nascimento"
+      [(ngModel)]="objPessoa.pesNasc"
+      name="pesNasc"
+      dateFormat="dd/mm/yy"
+      [showIcon]="true"
+      [style]="{width: '100%'}"
+      >
+      </p-calendar>
+    </div>
+    <!-- TIPO PESSOA -->
+    <div class="field col-12 md:col-4">
+      <label for="tipoPessoa">Tipo Pessoa</label><br>
+      <p-dropdown
+      placeholder="Selecione"
+      id="tipoPessoa"
+      [options]="lstTipoPessoa"
+      optionLabel="TipDesc"
+      [(ngModel)]="objTipoPessoa"
+      [style]="{width: '100%'}"
+      [showClear]="true"
+      ></p-dropdown>
+    </div>
+    <!-- GÊNERO -->
+    <div class="field col-12 md:col-4">
+      <label for="genero">Gênero</label><br>
+      <p-dropdown
+      placeholder="Selecione"
+      id="genero"
+      [options]="lstGenero"
+      optionLabel="GenDesc"
+      [(ngModel)]="objGenero"
+      [style]="{width: '100%'}"
+      [showClear]="true"
+      ></p-dropdown>
+    </div>
+    <!-- DOCUMENTOS -->
+    <div class="field col-12 md:col-6">
+      <p>Documentos</p>
+      <div class="flex align-items-center gap-2 mb-2">
+        <div class="grid">
+          <div class="flex flex-column flex-grow-1 col-12 md:col-6">
+            <label for="tipoDoc">Tipo de Documento</label>
+            <p-dropdown
+              placeholder="Selecione"
+              id="tipoDoc"
+              [options]="lstTipoDocumento"
+              optionLabel="TidDesc"
+              [(ngModel)]="objTipoDocumento"
+              [style]="{ width: '100%' }"
+              [showClear]="true"
+            ></p-dropdown>
+          </div>
+          <div class="flex flex-column flex-grow-1 col-12 md:col-5">
+            <label for="numDoc">Número do Documento</label>
+            <input
+              id="numDoc"
+              [(ngModel)]="objDocumento.DocNume"
+              type="text"
+              pInputText
+              style="width: 100%;"
+            />
+          </div>
+          <div class=" text-center flex flex-column flex-grow-1 col-12 md:col-1 mt-3">
+            <p-button
+              icon="pi pi-plus"
+              [rounded]="true"
+              [text]="true"
+              [raised]="true"
+              severity="success"
+              (onClick)="AddDoc();"
+            ></p-button>
+          </div>
+        </div>
+      </div>
+      <p-table
+      styleClass="p-datatable-sm"
+      [value]="lstDocumento">
+        <ng-template pTemplate="header">
+            <tr>
+                <th>Tipo</th>
+                <th>Número</th>
+                <th>Remover</th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-item>
+            <tr>
+                <td>{{ RetornaNomeDoc(item.TidCodi) }}</td>
+                <td>{{ item.DocNume }}</td>
+                <td><p-button (onClick)="DelDoc(item.DocNume);" icon="pi pi-times" [rounded]="true" [text]="true" severity="danger" /></td>
+            </tr>
+        </ng-template>
+      </p-table>
+
+    </div>
+    <!-- CONTATOS -->
+    <div class="field col-12 md:col-6">
+      <p>Contatos</p>
+      <div class="flex align-items-center gap-2 mb-2">
+        <div class="grid">
+          <div class="flex flex-column flex-grow-1 col-12 md:col-6">
+            <label for="TicCodi">Tipo de Contato</label>
+            <p-dropdown
+              placeholder="Selecione"
+              id="TicCodi"
+              [options]="lstTipoContato"
+              optionLabel="TicDesc"
+              [(ngModel)]="objTipoContato"
+              [style]="{ width: '100%' }"
+              [showClear]="true"
+            ></p-dropdown>
+          </div>
+          <div class="flex flex-column flex-grow-1 col-12 md:col-5">
+            <label for="TicDesc">Descrição do Contato</label>
+            <input
+              id="TicDesc"
+              [(ngModel)]="objContato.CttDesc"
+              type="text"
+              pInputText
+              style="width: 100%;"
+            />
+          </div>
+          <div class=" text-center flex flex-column flex-grow-1 col-12 md:col-1 mt-3">
+            <p-button
+              icon="pi pi-plus"
+              [rounded]="true"
+              [text]="true"
+              [raised]="true"
+              severity="success"
+              (onClick)="AddCtt();"
+            ></p-button>
+          </div>
+        </div>
+      </div>
+      <p-table
+      styleClass="p-datatable-sm"
+      [value]="lstContato">
+        <ng-template pTemplate="header">
+            <tr>
+                <th>Tipo</th>
+                <th>Descrição</th>
+                <th>Remover</th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-item>
+            <tr>
+                <td>{{ RetornaNomeCtt(item.TicCodi) }}</td>
+                <td>{{ item.CttDesc }}</td>
+                <td><p-button (onClick)="DelCtt(item.CttDesc);" icon="pi pi-times" [rounded]="true" [text]="true" severity="danger" /></td>
+            </tr>
+        </ng-template>
+      </p-table>
+
+    </div>
+    <!-- FOTO -->
+    <div class="field col-12">
+      <label for="fileUpload">Foto</label><br />
+      <div class="flex align-items-center gap-2">
+        <button
+          pButton
+          type="button"
+          label="{{ buttonLabel }}"
+          icon="pi pi-upload"
+          (click)="fileInput.click()"
+        ></button>
+        <input
+          type="file"
+          accept="image/*"
+          (change)="onFileSelect($event)"
+          id="fileUpload"
+          style="display: none;"
+          #fileInput
+        />
+        <div *ngIf="imageName" class="flex align-items-center">
+          <img
+            [src]="imagePreview"
+            [alt]="imageName"
+            style="width: 80px; height: auto; margin-left: 10px;"
+          />
+          <span style="margin-left: 10px;">{{ imageName }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- BOTÕES -->
+    <div class="field col-12 text-right">
+      <p-button (onClick)="Salvar();" label="Salvar" [raised]="true" severity="success" />
+      &nbsp;
+      <p-button (onClick)="Cancelar();" label="Cancelar" [raised]="true" severity="danger" />
+    </div>
+  </div>
+</div>

@@ -7,6 +7,13 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NgxMaskDirective, provideNgxMask } from 'ngx-mask';
 import { CpfMaskPipe } from './services/cpf-mask.pipe';
 import { BlockUIModule } from 'primeng/blockui';
+import { CalendarModule } from 'primeng/calendar';
+import { InputTextModule } from 'primeng/inputtext';
+import { DropdownModule } from 'primeng/dropdown';
+import { InputSwitchModule } from 'primeng/inputswitch';
+import { FileUploadModule } from 'primeng/fileupload';
+import { ToastModule } from 'primeng/toast';
+import { TableModule } from 'primeng/table';
 
 @NgModule({
   imports: [
@@ -16,7 +23,14 @@ import { BlockUIModule } from 'primeng/blockui';
     ReactiveFormsModule,
     NgxMaskDirective,
     CpfMaskPipe,
-    BlockUIModule
+    BlockUIModule,
+    CalendarModule,
+    InputTextModule,
+    DropdownModule,
+    InputSwitchModule,
+    FileUploadModule,
+    ToastModule,
+    TableModule
   ],
   exports: [
     CommonModule,
@@ -25,7 +39,14 @@ import { BlockUIModule } from 'primeng/blockui';
     ReactiveFormsModule,
     NgxMaskDirective,
     CpfMaskPipe,
-    BlockUIModule
+    BlockUIModule,
+    CalendarModule,
+    InputTextModule,
+    DropdownModule,
+    InputSwitchModule,
+    FileUploadModule,
+    ToastModule,
+    TableModule
   ],
   providers: [provideNgxMask()]
 })
