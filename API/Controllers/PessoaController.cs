@@ -51,7 +51,7 @@ namespace API_BetterLife.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<PessoaDTO>> PostPessoa(PessoaDTO pessoaDTO)
+        public async Task<ActionResult<string>> PostPessoa(PessoaDTO pessoaDTO)
         {
             using var transaction = await _context.Database.BeginTransactionAsync();
 
@@ -60,10 +60,7 @@ namespace API_BetterLife.Controllers
                 //-> Adicionando a pessoa
                 var pessoa = new Pessoa
                 {
-                    PesCodi = (short)(_context.Pessoas
-                        .OrderByDescending(lastId => lastId)
-                        .Select(lastId => lastId.PesCodi)
-                        .FirstOrDefault() + 1),
+                    PesCodi = _context.Pessoas.Max(p => (long?)p.PesCodi) + 1 ?? 1,
                     PesNome = pessoaDTO.PesNome,
                     PesFoto = pessoaDTO.PesFoto,
                     PesNasc = pessoaDTO.PesNasc,
@@ -82,17 +79,13 @@ namespace API_BetterLife.Controllers
                     {
                         var contato = new Contato
                         {
-                            CttCodi = _context.Contatos
-                                .OrderByDescending(lastId => lastId)
-                                .Select(lastId => lastId.CttCodi)
-                                .FirstOrDefault() + 1,
+                            CttCodi = _context.Contatos.Max(p => (long?)p.CttCodi) + 1 ?? 1,
                             CttDesc = item.CttDesc,
                             CttStat = true, //-> Ativo sempre que insere.
                             TicCodi = item.TicCodi
                         };
 
                         _context.Contatos.Add(contato);
-                        await _context.SaveChangesAsync();
 
                         //-> Inserindo na tabela PessoaContato
                         var pessoaContato = new PessoaContato
@@ -112,16 +105,13 @@ namespace API_BetterLife.Controllers
                 }
 
                 //-> Adicionando os documentos da pessoa
-                if(pessoaDTO.listaDocumentos?.Count() > 0)
+                if (pessoaDTO.listaDocumentos?.Count() > 0)
                 {
                     foreach (var item in pessoaDTO.listaDocumentos)
                     {
                         var documento = new Documento
                         {
-                            DocCodi = _context.Documentos
-                                .OrderByDescending(lastId => lastId)
-                                .Select(lastId => lastId.DocCodi)
-                                .FirstOrDefault() + 1,
+                            DocCodi = _context.Documentos.Max(p => (long?)p.DocCodi) + 1 ?? 1,
                             DocNume = item.DocNume,
                             DocStat = true, //-> Ativo sempre que insere.
                             PesCodi = pessoa.PesCodi,
@@ -133,8 +123,9 @@ namespace API_BetterLife.Controllers
                     }
                 }
 
+                await _context.SaveChangesAsync();
                 await transaction.CommitAsync();
-                return Ok(pessoa);
+                return Ok("OK");
             }
             catch (Exception ex)
             {

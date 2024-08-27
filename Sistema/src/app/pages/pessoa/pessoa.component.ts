@@ -10,6 +10,7 @@ import { TipoDocumentoModel } from '../../models/TipoDocumento.Model';
 import { DocumentoModel } from '../../models/Documento.Model';
 import { TipoContatoModel } from '../../models/TipoContato.Model';
 import { ContatoModel } from '../../models/Contato.Model';
+import { Utils } from '../../services/utils';
 
 
 @Component({
@@ -41,7 +42,8 @@ export class PessoaComponent implements OnInit {
 
   constructor(
     private http: HttpService,
-    private messageService: MessageService
+    private messageService: MessageService,
+    private utils: Utils
   ) { }
 
   ngOnInit(): void {
@@ -121,17 +123,27 @@ export class PessoaComponent implements OnInit {
     this.objDocumento.TidCodi = this.objTipoDocumento ? this.objTipoDocumento.TidCodi : 0;
     if (this.objDocumento.TidCodi > 0) {
       if (this.objDocumento.DocNume.length > 0) {
-        let existeDoc: boolean = false;
-        this.lstDocumento.forEach(itemDoc => {
-          existeDoc = itemDoc.TidCodi === this.objDocumento.TidCodi;
-        });
-
+        //-> Verificando se já existe um tipo de documento já cadastrado, que pode apenas um.
+        const existeDoc = this.lstDocumento.some(d => d.TidCodi === this.objDocumento.TidCodi);
         if (!existeDoc) {
-          this.lstDocumento.push(this.objDocumento);
-          this.RetornaNomeDoc(this.objDocumento.TidCodi);
+          if (this.objDocumento.TidCodi === 1) { //-> CPF
+            let cpfValido: boolean = this.utils.ValidarCpf(this.objDocumento.DocNume);
+            if (cpfValido) {
+              this.lstDocumento.push(this.objDocumento);
+              this.RetornaNomeDoc(this.objDocumento.TidCodi);
 
-          this.objDocumento = new DocumentoModel();
-          this.objTipoDocumento = new TipoDocumentoModel();
+              this.objDocumento = new DocumentoModel();
+              this.objTipoDocumento = new TipoDocumentoModel();
+            } else {
+              this.messageService.add({severity:'warn', summary:'Atenção: ', detail: 'Número de CPF inválido.'});
+            }
+          } else {
+            this.lstDocumento.push(this.objDocumento);
+            this.RetornaNomeDoc(this.objDocumento.TidCodi);
+
+            this.objDocumento = new DocumentoModel();
+            this.objTipoDocumento = new TipoDocumentoModel();
+          }
         } else {
           this.messageService.add({severity:'warn', summary:'Atenção: ', detail: 'Tipo de documento já cadastrado.'});
         }
@@ -148,11 +160,21 @@ export class PessoaComponent implements OnInit {
     this.objContato.TicCodi = this.objTipoContato ? this.objTipoContato.TicCodi : 0;
     if (this.objContato.TicCodi > 0) {
       if (this.objContato.CttDesc.length > 0) {
-        this.lstContato.push(this.objContato);
-        this.RetornaNomeCtt(this.objContato.TicCodi);
-        console.log(this.lstContato);
-        this.objContato = new ContatoModel();
-        this.objTipoContato = new TipoContatoModel();
+        if (this.objContato.TicCodi === 2) { //-> E-mail
+          if (this.utils.ValidarEmail(this.objContato.CttDesc)) {
+            this.lstContato.push(this.objContato);
+            this.RetornaNomeCtt(this.objContato.TicCodi);
+            this.objContato = new ContatoModel();
+            this.objTipoContato = new TipoContatoModel();
+          } else {
+            this.messageService.add({severity:'warn', summary:'Atenção: ', detail: 'E-mail inválido.'});
+          }
+        } else {
+          this.lstContato.push(this.objContato);
+          this.RetornaNomeCtt(this.objContato.TicCodi);
+          this.objContato = new ContatoModel();
+          this.objTipoContato = new TipoContatoModel();
+        }
       } else {
         this.messageService.add({severity:'warn', summary:'Atenção: ', detail: 'Insira os dados do contato.'});
       }
@@ -176,6 +198,7 @@ export class PessoaComponent implements OnInit {
   }
 
   Salvar() {
+    this.blockLoading = true;
     this.objPessoa.pesStat = true;
     this.objPessoa.pesFoto = this.base64Image!;
     this.objPessoa.tipCodi = this.objTipoPessoa.TipCodi;
@@ -184,7 +207,27 @@ export class PessoaComponent implements OnInit {
     this.objPessoa.listaContatos = this.lstContato;
 
     if (this.Valida()) {
-      console.warn("Pessoa: ", this.objPessoa);
+      // console.warn("Pessoa: ", this.objPessoa);
+      try {
+        this.http.PostPessoa(this.objPessoa).subscribe({
+          next: (response) => {
+            this.blockLoading = false;
+            if (response === "OK") {
+              this.messageService.add({ severity: 'success', summary: 'Sucesso!', detail: 'Registro salvo com sucesso!' });
+              this.Cancelar();
+            }
+          },
+          error: (error) => {
+            this.blockLoading = false;
+            console.error('Erro ao inserir a pessoa:', error);
+            this.messageService.add({severity:'error', summary:'Erro: ', detail: 'Erro ao inserir a pessoa:' + error.status});
+          }
+        });
+      } catch (error) {
+        this.blockLoading = false;
+        console.error(error);
+        this.messageService.add({severity:'error', summary:'Erro: ', detail: 'Erro ao inserir a pessoa:' + error});
+      }
     }
   }
 
@@ -207,6 +250,12 @@ export class PessoaComponent implements OnInit {
   }
 
   Valida() {
+    //-> Verificando se o cadastro possui um número de CPF como documento:
+    let possuiCPF: boolean = false;
+    this.objPessoa.listaDocumentos.forEach(itemDoc => {
+      possuiCPF = itemDoc.TidCodi === 1;
+    });
+
     if (this.objPessoa.pesNome.length >= 5) {
       if (this.objPessoa.pesNasc.getFullYear() !== new Date().getFullYear()) {
         if (this.objPessoa.tipCodi > 0) {
@@ -221,7 +270,13 @@ export class PessoaComponent implements OnInit {
               if (this.objPessoa.tipCodi !== 1 || !medico) {
                 if (this.lstDocumento.length > 0) {
                   if (this.lstContato.length > 0) {
-                    return true;
+                    if (possuiCPF) {
+                      return true;
+                    } else {
+                      this.blockLoading = false;
+                      this.messageService.add({severity:'warn', summary:'Atenção: ', detail: 'Documento CPF é obrigatório para o cadastro.'});
+                      return false;
+                    }
                   } else {
                     this.blockLoading = false;
                     this.messageService.add({severity:'warn', summary:'Atenção: ', detail: 'Adicione pelo menos um contato da pessoa.'});

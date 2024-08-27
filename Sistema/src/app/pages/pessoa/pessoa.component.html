@@ -101,7 +101,8 @@
         <ng-template pTemplate="body" let-item>
             <tr>
                 <td>{{ RetornaNomeDoc(item.TidCodi) }}</td>
-                <td>{{ item.DocNume }}</td>
+                <!-- <td>{{ item.DocNume }}</td> -->
+                <td>{{ item.TidCodi != 1 ? item.DocNume : item.DocNume | cpfMask}}</td>
                 <td><p-button (onClick)="DelDoc(item.DocNume);" icon="pi pi-times" [rounded]="true" [text]="true" severity="danger" /></td>
             </tr>
         </ng-template>
@@ -160,7 +161,8 @@
         <ng-template pTemplate="body" let-item>
             <tr>
                 <td>{{ RetornaNomeCtt(item.TicCodi) }}</td>
-                <td>{{ item.CttDesc }}</td>
+                <!-- <td>{{ item.CttDesc }}</td> -->
+                <td>{{ item.TicCodi === 2 ? item.CttDesc : item.CttDesc | telefone }}</td>
                 <td><p-button (onClick)="DelCtt(item.CttDesc);" icon="pi pi-times" [rounded]="true" [text]="true" severity="danger" /></td>
             </tr>
         </ng-template>

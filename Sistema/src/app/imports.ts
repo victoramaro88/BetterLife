@@ -14,6 +14,8 @@ import { InputSwitchModule } from 'primeng/inputswitch';
 import { FileUploadModule } from 'primeng/fileupload';
 import { ToastModule } from 'primeng/toast';
 import { TableModule } from 'primeng/table';
+import { MenuModule } from 'primeng/menu';
+import { TelefonePipe } from './services/telefone.pipe';
 
 @NgModule({
   imports: [
@@ -30,7 +32,9 @@ import { TableModule } from 'primeng/table';
     InputSwitchModule,
     FileUploadModule,
     ToastModule,
-    TableModule
+    TableModule,
+    MenuModule,
+    TelefonePipe
   ],
   exports: [
     CommonModule,
@@ -46,7 +50,9 @@ import { TableModule } from 'primeng/table';
     InputSwitchModule,
     FileUploadModule,
     ToastModule,
-    TableModule
+    TableModule,
+    MenuModule,
+    TelefonePipe
   ],
   providers: [provideNgxMask()]
 })

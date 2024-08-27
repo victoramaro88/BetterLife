@@ -4,13 +4,16 @@ import { CarteiraBariatricaComponent } from './pages/carteira-bariatrica/carteir
 import { NgModule } from '@angular/core';
 import { LoginComponent } from './pages/login/login.component';
 import { PessoaComponent } from './pages/pessoa/pessoa.component';
+import { HomeComponent } from './pages/home/home.component';
 
 export const routes: Routes = [
   { path: 'login', component: LoginComponent },
   { path: 'valida', component: ValidaCarteiraComponent },
   { path: 'carteira', component: CarteiraBariatricaComponent },
   { path: 'pessoa', component: PessoaComponent },
-  { path: '**', redirectTo: 'login' }
+  { path: 'home', component: HomeComponent },
+  // { path: '**', redirectTo: 'login' }
+  { path: '**', redirectTo: 'home' }
 ];
 
 @NgModule({

@@ -7,6 +7,7 @@ import { TipoPessoaModel } from "../models/TipoPessoa.Model";
 import { GeneroModel } from "../models/Genero.Model";
 import { TipoDocumentoModel } from "../models/TipoDocumento.Model";
 import { TipoContatoModel } from "../models/TipoContato.Model";
+import { PessoaDTO } from "../models/PessoaDTO.Model";
 
 @Injectable({
     providedIn: 'root'
@@ -14,7 +15,9 @@ import { TipoContatoModel } from "../models/TipoContato.Model";
 
 export class HttpService {
 
-    constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) { }
+
+  // #region GET
 
   public GetCarteira(docNume: string): Observable<CarteiraBariatricaModel> {
       return this.http.get<CarteiraBariatricaModel>(`${environment.apiServicos}/CarteiraBariatrica/${docNume}`);
@@ -35,5 +38,13 @@ export class HttpService {
   public GetTipoContato(): Observable<TipoContatoModel[]> {
     return this.http.get<TipoContatoModel[]>(`${environment.apiServicos}/TipoContato`);
   }
+
+  // #endregion
+
+  // #region POST
+  public PostPessoa(objPessoa: PessoaDTO): Observable<string> {
+    return this.http.post<string>(`${environment.apiServicos}/Pessoa`, objPessoa);
+  }
+  // #endregion
 
 }
