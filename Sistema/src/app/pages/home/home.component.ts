@@ -19,17 +19,31 @@ export class HomeComponent implements OnInit {
   ngOnInit() {
       this.items = [
         {
-          label: 'Login',
-          icon: 'pi pi-plus',
-          route: '/login'
-        },
-        {
           label: 'Pessoa',
           route: '/pessoa'
         },
         {
-          label: 'Teste'
+          label: 'Consultórios',
+          route: '/consultorio'
+        },
+        {
+          label: 'Logout',
+          command: () => {
+            this.logout();
+          },
         }
       ];
+  }
+
+  logout() {
+    localStorage.clear();
+    sessionStorage.clear();
+    caches.keys().then(names => {
+      names.forEach(name => {
+        caches.delete(name);
+      });
+    });
+
+    this.router.navigate(['/login']);
   }
 }

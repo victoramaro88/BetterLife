@@ -5,13 +5,15 @@ import { NgModule } from '@angular/core';
 import { LoginComponent } from './pages/login/login.component';
 import { PessoaComponent } from './pages/pessoa/pessoa.component';
 import { HomeComponent } from './pages/home/home.component';
+import { ConsultorioComponent } from './pages/consultorio/consultorio.component';
 
 export const routes: Routes = [
   { path: 'login', component: LoginComponent },
+  { path: 'home', component: HomeComponent },
   { path: 'valida', component: ValidaCarteiraComponent },
   { path: 'carteira', component: CarteiraBariatricaComponent },
   { path: 'pessoa', component: PessoaComponent },
-  { path: 'home', component: HomeComponent },
+  { path: 'consultorio', component: ConsultorioComponent },
   // { path: '**', redirectTo: 'login' }
   { path: '**', redirectTo: 'home' }
 ];

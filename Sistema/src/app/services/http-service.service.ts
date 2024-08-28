@@ -1,6 +1,6 @@
 import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { environment } from "../../environments/environment";
 import { CarteiraBariatricaModel } from "../models/carteirabariatrica.model";
 import { TipoPessoaModel } from "../models/TipoPessoa.Model";
@@ -8,6 +8,7 @@ import { GeneroModel } from "../models/Genero.Model";
 import { TipoDocumentoModel } from "../models/TipoDocumento.Model";
 import { TipoContatoModel } from "../models/TipoContato.Model";
 import { PessoaDTO } from "../models/PessoaDTO.Model";
+import { ConsultorioModel } from "../models/Consultorio.Model";
 
 @Injectable({
     providedIn: 'root'
@@ -39,12 +40,22 @@ export class HttpService {
     return this.http.get<TipoContatoModel[]>(`${environment.apiServicos}/TipoContato`);
   }
 
+  public GetConsultorio(): Observable<ConsultorioModel[]> {
+    return this.http.get<ConsultorioModel[]>(`${environment.apiServicos}/Consultorio`);
+  }
+
   // #endregion
 
   // #region POST
   public PostPessoa(objPessoa: PessoaDTO): Observable<string> {
     return this.http.post<string>(`${environment.apiServicos}/Pessoa`, objPessoa);
   }
+
+  public ValidarLogin(cpf: string, senha: string): Observable<string> {
+    // return this.http.post<string>(`${environment.apiServicos}/Pessoa`, objPessoa);
+    return of("OK");
+  }
+
   // #endregion
 
 }

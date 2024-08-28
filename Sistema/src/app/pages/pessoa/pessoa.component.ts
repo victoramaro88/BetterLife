@@ -11,6 +11,7 @@ import { DocumentoModel } from '../../models/Documento.Model';
 import { TipoContatoModel } from '../../models/TipoContato.Model';
 import { ContatoModel } from '../../models/Contato.Model';
 import { Utils } from '../../services/utils';
+import { Router } from '@angular/router';
 
 
 @Component({
@@ -43,7 +44,8 @@ export class PessoaComponent implements OnInit {
   constructor(
     private http: HttpService,
     private messageService: MessageService,
-    private utils: Utils
+    private utils: Utils,
+    private router: Router,
   ) { }
 
   ngOnInit(): void {
@@ -247,6 +249,8 @@ export class PessoaComponent implements OnInit {
     this.imagePreview = '';
     this.selectedFile = null;
     this.base64Image = '';
+
+    this.router.navigate(['/home']);
   }
 
   Valida() {

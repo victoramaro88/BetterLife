@@ -16,6 +16,8 @@ import { ToastModule } from 'primeng/toast';
 import { TableModule } from 'primeng/table';
 import { MenuModule } from 'primeng/menu';
 import { TelefonePipe } from './services/telefone.pipe';
+import { PasswordModule } from 'primeng/password';
+import { InputMaskModule } from 'primeng/inputmask';
 
 @NgModule({
   imports: [
@@ -34,7 +36,9 @@ import { TelefonePipe } from './services/telefone.pipe';
     ToastModule,
     TableModule,
     MenuModule,
-    TelefonePipe
+    TelefonePipe,
+    PasswordModule,
+    InputMaskModule
   ],
   exports: [
     CommonModule,
@@ -52,7 +56,9 @@ import { TelefonePipe } from './services/telefone.pipe';
     ToastModule,
     TableModule,
     MenuModule,
-    TelefonePipe
+    TelefonePipe,
+    PasswordModule,
+    InputMaskModule
   ],
   providers: [provideNgxMask()]
 })
