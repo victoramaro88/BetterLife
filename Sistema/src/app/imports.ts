@@ -18,6 +18,9 @@ import { MenuModule } from 'primeng/menu';
 import { TelefonePipe } from './services/telefone.pipe';
 import { PasswordModule } from 'primeng/password';
 import { InputMaskModule } from 'primeng/inputmask';
+import { ImageModule } from 'primeng/image';
+import { TooltipModule } from 'primeng/tooltip';
+import { CardModule } from 'primeng/card';
 
 @NgModule({
   imports: [
@@ -38,7 +41,10 @@ import { InputMaskModule } from 'primeng/inputmask';
     MenuModule,
     TelefonePipe,
     PasswordModule,
-    InputMaskModule
+    InputMaskModule,
+    ImageModule,
+    TooltipModule,
+    CardModule
   ],
   exports: [
     CommonModule,
@@ -58,7 +64,10 @@ import { InputMaskModule } from 'primeng/inputmask';
     MenuModule,
     TelefonePipe,
     PasswordModule,
-    InputMaskModule
+    InputMaskModule,
+    ImageModule,
+    TooltipModule,
+    CardModule
   ],
   providers: [provideNgxMask()]
 })

@@ -1,5 +1,95 @@
 <p-blockUI [blocked]="blockLoading">
-  <i class="pi pi-spin pi-spinner" style="font-size: 3rem"></i>
+  <i class="pi pi-spin pi-spinner-dotted-dotted" style="font-size: 3rem"></i>
 </p-blockUI>
+<p-toast />
 
-<h3>Consultório: {{lstConsultorio[0] ? lstConsultorio[0].ConDesc : ''}}</h3>
+<div class="container">
+  <p-card header="Consultório" class="card">
+    <!-- GRID DOS CONSULTÓRIOS -->
+    <p-table
+    *ngIf="!boolEditarSalvar"
+    [value]="lstConsultorio"
+    [tableStyle]="{ 'min-width': '50rem' }"
+    styleClass="p-datatable-sm p-datatable-striped"
+    [paginator]="true"
+    [rows]="5"
+    [tableStyle]="{ 'min-width': '50rem' }"
+    [rowsPerPageOptions]="[5, 10, 20]"
+    >
+      <ng-template pTemplate="header">
+          <tr>
+              <th>Código</th>
+              <th>Nome</th>
+              <th>Imagem</th>
+              <th>Status</th>
+              <th>Opções</th>
+          </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-item>
+          <tr>
+              <td>{{ item.ConCodi }}</td>
+              <td>{{ item.ConDesc }}</td>
+              <td>
+                <p-image
+                src="{{item.ConFoto}}"
+                alt="Image"
+                width="33" />
+              </td>
+              <td>{{ item.ConStat ? 'Ativo' : 'Inativo' }}</td>
+              <td><p-button (onClick)="EditarConsultorio(item.ConCodi);" pTooltip="Editar" tooltipPosition="left" icon="pi pi-pen-to-square" [rounded]="true" [text]="true" severity="secondary" /></td>
+          </tr>
+      </ng-template>
+    </p-table>
+
+    <!-- CADASTRO DO CONSULTÓRIO -->
+    <div *ngIf="boolEditarSalvar" class="formgrid grid">
+      <!-- NOME -->
+      <div class="field col-12">
+          <label for="nome">Nome</label><br>
+          <input type="text" pInputText [(ngModel)]="objConsultorio.ConDesc" class="w-full"/>
+      </div>
+      <!-- FOTO -->
+      <div class="field col-12">
+        <label for="fileUpload">Logotipo</label><br />
+        <div class="flex align-items-center gap-2">
+          <button
+            pButton
+            type="button"
+            label="{{ buttonLabel }}"
+            icon="pi pi-upload"
+            (click)="fileInput.click()"
+            size="small"
+          ></button>
+          <input
+            type="file"
+            accept="image/*"
+            (change)="onFileSelect($event)"
+            id="fileUpload"
+            style="display: none;"
+            #fileInput
+          />
+          <div *ngIf="imageName" class="flex align-items-center">
+            <img
+              [src]="imagePreview"
+              [alt]="imageName"
+              style="width: 80px; height: auto; margin-left: 10px;"
+            />
+            <span style="margin-left: 10px;">{{ imageName }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- BOTÕES -->
+    <div class="text-right">
+      <div *ngIf="!boolEditarSalvar" class="mt-3">
+        <p-button (onClick)="NovoRegistro();" label="Novo Registro" [raised]="true" size="small"/> &nbsp;
+        <p-button (onClick)="CancelaForm();" label="Cancelar" [raised]="true" severity="danger" size="small"/>
+      </div> &nbsp;
+      <p-button *ngIf="boolEditarSalvar" (onClick)="Salvar();" label="Salvar" [raised]="true" severity="success" size="small"/> &nbsp;
+      <p-button *ngIf="boolEditarSalvar" (onClick)="Cancelar();" label="Cancelar" [raised]="true" severity="danger" size="small"/>
+    </div>
+  </p-card>
+
+
+</div>

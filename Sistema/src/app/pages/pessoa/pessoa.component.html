@@ -1,5 +1,5 @@
 <p-blockUI [blocked]="blockLoading">
-  <i class="pi pi-spin pi-spinner" style="font-size: 3rem"></i>
+  <i class="pi pi-spin pi-spinner-dotted-dotted" style="font-size: 3rem"></i>
 </p-blockUI>
 <p-toast />
 
@@ -179,6 +179,7 @@
           label="{{ buttonLabel }}"
           icon="pi pi-upload"
           (click)="fileInput.click()"
+          size="small"
         ></button>
         <input
           type="file"
@@ -201,9 +202,9 @@
 
     <!-- BOTÕES -->
     <div class="field col-12 text-right">
-      <p-button (onClick)="Salvar();" label="Salvar" [raised]="true" severity="success" />
+      <p-button (onClick)="Salvar();" label="Salvar" [raised]="true" severity="success" size="small" />
       &nbsp;
-      <p-button (onClick)="Cancelar();" label="Cancelar" [raised]="true" severity="danger" />
+      <p-button (onClick)="Cancelar();" label="Cancelar" [raised]="true" severity="danger" size="small" />
     </div>
   </div>
 </div>

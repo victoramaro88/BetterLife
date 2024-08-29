@@ -40,8 +40,12 @@ export class HttpService {
     return this.http.get<TipoContatoModel[]>(`${environment.apiServicos}/TipoContato`);
   }
 
-  public GetConsultorio(): Observable<ConsultorioModel[]> {
+  public GetConsultorios(): Observable<ConsultorioModel[]> {
     return this.http.get<ConsultorioModel[]>(`${environment.apiServicos}/Consultorio`);
+  }
+
+  public GetConsultorio(conCodi: number): Observable<ConsultorioModel> {
+    return this.http.get<ConsultorioModel>(`${environment.apiServicos}/Consultorio/${conCodi}`);
   }
 
   // #endregion
@@ -51,11 +55,21 @@ export class HttpService {
     return this.http.post<string>(`${environment.apiServicos}/Pessoa`, objPessoa);
   }
 
+  public PostConsultorio(objConsultorio: ConsultorioModel): Observable<string> {
+    return this.http.post<string>(`${environment.apiServicos}/Consultorio`, objConsultorio);
+  }
+
   public ValidarLogin(cpf: string, senha: string): Observable<string> {
     // return this.http.post<string>(`${environment.apiServicos}/Pessoa`, objPessoa);
     return of("OK");
   }
 
+  // #endregion
+
+  // #region PUT
+  public PutConsultorio(conCodi: number, objConsultorio: ConsultorioModel): Observable<string> {
+    return this.http.put<string>(`${environment.apiServicos}/Consultorio/${conCodi}`, objConsultorio);
+  }
   // #endregion
 
 }

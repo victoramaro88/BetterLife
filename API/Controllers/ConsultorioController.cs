@@ -22,7 +22,7 @@ namespace API_BetterLife.Controllers
         }
 
         [HttpGet("{conCodi}")]
-        public async Task<ActionResult<Consultorio>> GetTipoDocumentos(int conCodi)
+        public async Task<ActionResult<Consultorio>> GetConsultorio(int conCodi)
         {
             var consultorio = await _context.Consultorios.FindAsync(conCodi);
 
@@ -53,7 +53,7 @@ namespace API_BetterLife.Controllers
                 _context.Consultorios.Add(consultorio);
                 await _context.SaveChangesAsync();
 
-                return Ok(consultorio);
+                return Ok("OK");
             }
             catch (Exception ex)
             {
@@ -124,7 +124,7 @@ namespace API_BetterLife.Controllers
                 }
             }
 
-            return Ok("Alterado com sucesso!");
+            return Ok("OK");
         }
 
         private bool ConsultorioExists(long id)
