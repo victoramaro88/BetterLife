@@ -12,6 +12,9 @@ import { TipoContatoModel } from '../../models/TipoContato.Model';
 import { ContatoModel } from '../../models/Contato.Model';
 import { Utils } from '../../services/utils';
 import { Router } from '@angular/router';
+import { UsuarioLogadoModel } from '../../models/UsuarioLogado.Model';
+import { CryptoService } from '../../services/crypto.service';
+import { PessoaConsultorioRetornoModel } from '../../models/PessoaConsultorioRetorno.Model';
 
 
 @Component({
@@ -27,7 +30,10 @@ export class PessoaComponent implements OnInit {
   objPessoa: PessoaDTO = new PessoaDTO();
   uploadedFiles: any[] = [];
   blockLoading: boolean = true;
+  novoObjUsr: UsuarioLogadoModel = new UsuarioLogadoModel();
 
+  listaPessoaConsultorio: PessoaConsultorioRetornoModel[] = [];
+  objUsuarioLogado: UsuarioLogadoModel = new UsuarioLogadoModel();
   lstTipoPessoa: TipoPessoaModel[] = [];
   objTipoPessoa: TipoPessoaModel = new TipoPessoaModel();
   lstGenero: GeneroModel[] = [];
@@ -40,15 +46,21 @@ export class PessoaComponent implements OnInit {
   objTipoContato: TipoContatoModel = new TipoContatoModel();
   lstContato: ContatoModel[] = [];
   objContato: ContatoModel = new ContatoModel();
+  boolEditarSalvar: boolean = false;
 
   constructor(
     private http: HttpService,
     private messageService: MessageService,
     private utils: Utils,
     private router: Router,
+    private cryptoService: CryptoService
   ) { }
 
   ngOnInit(): void {
+    this.novoObjUsr = JSON.parse(this.cryptoService.lerDoSessionStorage("usr"));
+    // console.warn(this.novoObjUsr);
+
+    this.GetPessoaByIdConsultorio(this.novoObjUsr.conCodi);
     this.GetTipoPessoa();
   }
 
@@ -118,6 +130,90 @@ export class PessoaComponent implements OnInit {
     } catch (error) {
       console.error(error);
     }
+  }
+
+  GetPessoaByIdConsultorio(conCodi: number) {
+    this.blockLoading = true;
+    this.listaPessoaConsultorio = [];
+    try {
+      this.http.GetPessoaByIdConsultorio(conCodi).subscribe({
+        next: (response) => {
+          this.listaPessoaConsultorio = response;
+          this.GetTipoDocumento();
+        },
+        error: (error) => {
+          console.error('Erro ao carregar dados:', error);
+        }
+      });
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  GetPessoaById(pesCodi: number) {
+    this.blockLoading = true;
+    try {
+      this.http.GetPessoaById(pesCodi).subscribe({
+        next: (response) => {
+          console.warn("Retorno:", response);
+          this.objPessoa.pesCodi = response.PesCodi;
+          this.objPessoa.pesNome = response.PesNome;
+
+          this.base64Image = response.PesFoto;
+          this.imagePreview = response.PesFoto;
+          this.imageName = "Imagem";
+          this.objTipoPessoa = this.lstTipoPessoa.find(p => p.TipCodi === response.TipCodi)!;
+          this.objGenero = this.lstGenero.find(g => g.GenCodi === response.GenCodi)!;
+          response.Documentos.forEach((item: any) => {
+            let objDoc: DocumentoModel = {
+              DocCodi: item.DocCodi,
+              DocNume: item.DocNume,
+              DocStat: true,
+              PesCodi: item.PesCodi,
+              TidCodi: item.TidCodi
+            };
+            this.lstDocumento.push(objDoc);
+          });
+          //-> FALTA FAZER COM A LISTA DE CONTATOS, COMO O DE CIMA, *******************************
+            // MAS AJUSTAR O RETORNO DOS CONTATOS QUE NÃO ESTÁ VINDO. *****************************
+          this.lstContato;
+
+          this.boolEditarSalvar = true;
+          this.blockLoading = false;
+        },
+        error: (error) => {
+          console.error('Erro ao carregar dados:', error);
+        }
+      });
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  AlteraStatusPessoa(pesCodi: number, pesStat: boolean) {
+    this.blockLoading = true;
+    try {
+      this.http.AlteraStatusPessoa(pesCodi, pesStat).subscribe({
+        next: (response) => {
+          console.warn("Retorno:", response);
+          if (response === "Alterado com sucesso!")
+          {
+            this.messageService.add({severity:'success', summary:'Sucesso!', detail: 'Alterado com sucesso!'});
+          }
+          this.GetPessoaByIdConsultorio(this.novoObjUsr.conCodi);
+        },
+        error: (error) => {
+          console.error('Erro ao carregar dados:', error);
+          this.messageService.add({severity:'error', summary:'Erro: ', detail: error.message});
+        }
+      });
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  EditarPessoa(pesCodi: number) {
+    this.blockLoading = true;
   }
 
   AddDoc() {
@@ -199,24 +295,33 @@ export class PessoaComponent implements OnInit {
     }
   }
 
+  NovoRegistro() {
+    this.boolEditarSalvar = true;
+  }
+
+  CancelaForm() {
+    this.router.navigate(['/home']);
+  }
+
   Salvar() {
     this.blockLoading = true;
     this.objPessoa.pesStat = true;
     this.objPessoa.pesFoto = this.base64Image!;
     this.objPessoa.tipCodi = this.objTipoPessoa.TipCodi;
     this.objPessoa.genCodi = this.objGenero.GenCodi;
+    this.objPessoa.conCodi = this.novoObjUsr.conCodi;
     this.objPessoa.listaDocumentos = this.lstDocumento;
     this.objPessoa.listaContatos = this.lstContato;
 
     if (this.Valida()) {
       // console.warn("Pessoa: ", this.objPessoa);
       try {
-        this.http.PostPessoa(this.objPessoa).subscribe({
+        this.http.InserirPessoa(this.objPessoa).subscribe({
           next: (response) => {
             this.blockLoading = false;
             if (response === "OK") {
               this.messageService.add({ severity: 'success', summary: 'Sucesso!', detail: 'Registro salvo com sucesso!' });
-              this.Cancelar();
+              // this.Cancelar();
             }
           },
           error: (error) => {
@@ -250,7 +355,10 @@ export class PessoaComponent implements OnInit {
     this.selectedFile = null;
     this.base64Image = '';
 
-    this.router.navigate(['/home']);
+    this.boolEditarSalvar = false;
+
+    // this.router.navigate(['/home']);
+    this.GetPessoaByIdConsultorio(this.novoObjUsr.conCodi);
   }
 
   Valida() {

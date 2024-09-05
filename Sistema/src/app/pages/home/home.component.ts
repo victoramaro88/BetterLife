@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { MenuItem } from 'primeng/api';
 import { ImportsModule } from '../../imports';
 import { Router } from '@angular/router';
+import { UsuarioLogadoModel } from '../../models/UsuarioLogado.Model';
+import { CryptoService } from '../../services/crypto.service';
 
 @Component({
   selector: 'app-home',
@@ -13,10 +15,18 @@ import { Router } from '@angular/router';
 export class HomeComponent implements OnInit {
 
   items: MenuItem[] | undefined;
+  objUsuarioLogado: UsuarioLogadoModel = new UsuarioLogadoModel();
+  novoObjUsr: UsuarioLogadoModel = new UsuarioLogadoModel();
 
-  constructor(private router: Router) {}
+  constructor(
+    private router: Router,
+    private cryptoService: CryptoService
+  ) {}
 
   ngOnInit() {
+    this.novoObjUsr = JSON.parse(this.cryptoService.lerDoSessionStorage("usr"));
+    // console.warn(novoObjUsr);
+
       this.items = [
         {
           label: 'Pessoa',

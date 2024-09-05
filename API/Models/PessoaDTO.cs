@@ -9,6 +9,7 @@
         public bool PesStat { get; set; }
         public short TipCodi { get; set; }
         public short GenCodi { get; set; }
+        public int ConCodi { get; set; }
 
         public List<ContatoDTO>? listaContatos { get; set; }
         public List<DocumentoDTO>? listaDocumentos { get; set; }

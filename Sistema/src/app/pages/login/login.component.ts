@@ -4,6 +4,8 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MessageService } from 'primeng/api';
 import { ImportsModule } from '../../imports';
 import { HttpService } from '../../services/http-service.service';
+import { UsuarioLogadoModel } from '../../models/UsuarioLogado.Model';
+import { CryptoService } from '../../services/crypto.service';
 
 @Component({
   selector: 'app-login',
@@ -17,16 +19,17 @@ export class LoginComponent implements OnInit {
 
   formulario: FormGroup;
   boolLoading = false;
-  msgs: any[] = [];
+  objUsuarioLogado: UsuarioLogadoModel = new UsuarioLogadoModel();
 
   constructor(
     private router: Router,
     private http: HttpService,
     private messageService: MessageService,
-    private formBuilder: FormBuilder
+    private formBuilder: FormBuilder,
+    private cryptoService: CryptoService
   ) {
     this.formulario = this.formBuilder.group({
-      cpf: ['', Validators.required],
+      usr: ['', Validators.required],
       senha: ['', [Validators.required]]
     });
   }
@@ -44,30 +47,31 @@ export class LoginComponent implements OnInit {
   }
 
   Login(): void {
-    this.msgs = [];
     this.boolLoading = true;
-    this.http.ValidarLogin(this.formulario.value.cpf.replace('.', '').replace('.', '').replace('-', ''), this.formulario.value.senha).subscribe({
-      next: (response) => {
-        console.warn('Perfil carregado:', response);
-        console.warn('*** NECESSITA VALIDAR O SERVIÇO E LOGIN DA PESSOA ***');
-        if (response == "OK") {
+    try {
+      this.http.ValidarLogin(this.formulario.value.usr.replace('.', '').replace('.', '').replace('-', ''), this.formulario.value.senha).subscribe({
+        next: (response) => {
+          // console.warn('Perfil carregado:', response);
+          this.objUsuarioLogado = response;
+          this.cryptoService.salvarNoSessionStorage("usr", JSON.stringify(this.objUsuarioLogado));
+          // console.warn(this.cryptoService.lerDoSessionStorage("usr"));
           this.router.navigate(['/home']);
           this.boolLoading = false;
+        },
+        error: (error) => {
+          this.boolLoading = false;
+          if(error.error ==='Senha incorreta.') {
+            this.messageService.add({severity:'error', summary:'Erro: ', detail: error.error});
+          } else if(error.error ==='Usuário não encontrado.') {
+            this.messageService.add({severity:'error', summary:'Erro: ', detail: error.error});
+          } else {
+            this.messageService.add({severity:'error', summary:'Erro: ', detail: error.message});
+          }
         }
-      },
-      error: (error) => {
-        this.msgs = [];
-        console.log(error);
-        this.boolLoading = false;
-        if(error.error ==='Usuario não encontrado.') {
-          this.messageService.add({severity:'error', summary:'Erro: ', detail: error.error});
-        } else if(error.error ==='Senha inválida.') {
-          this.messageService.add({severity:'error', summary:'Erro: ', detail: error.error});
-        } else {
-          this.messageService.add({severity:'error', summary:'Erro: ', detail: error.message});
-        }
-      }
-    });
+      });
+    } catch (error) {
+      console.warn(error);
+    }
   }
 
 }

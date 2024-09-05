@@ -9,6 +9,7 @@ export class PessoaDTO {
   pesStat: boolean;
   tipCodi: number;
   genCodi: number;
+  conCodi: number;
 
   listaContatos: ContatoModel[];
   listaDocumentos: DocumentoModel[];
@@ -21,6 +22,7 @@ export class PessoaDTO {
     this.pesStat = false;
     this.tipCodi = 0;
     this.genCodi = 0;
+    this.conCodi = 0;
 
     this.listaContatos = [];
     this.listaDocumentos = [];

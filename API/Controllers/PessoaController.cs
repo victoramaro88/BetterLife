@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace API_BetterLife.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/[controller]/[action]")]
     [ApiController]
     public class PessoaController : ControllerBase
     {
@@ -30,7 +30,7 @@ namespace API_BetterLife.Controllers
         }
 
         [HttpGet("{pesCodi}")]
-        public async Task<ActionResult<Pessoa>> GetPessoas(long pesCodi)
+        public async Task<ActionResult<Pessoa>> GetPessoaById(long pesCodi)
         {
             var pessoa = await _context.Pessoas
                 .Include(p => p.GenCodiNavigation)
@@ -51,7 +51,7 @@ namespace API_BetterLife.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<string>> PostPessoa(PessoaDTO pessoaDTO)
+        public async Task<ActionResult<string>> InserirPessoa(PessoaDTO pessoaDTO)
         {
             using var transaction = await _context.Database.BeginTransactionAsync();
 
@@ -123,6 +123,21 @@ namespace API_BetterLife.Controllers
                     }
                 }
 
+                //-> Adicionando na tabela de PessoaConsultorio
+                if(pessoaDTO.ConCodi > 0)
+                {
+                    var pessoaConsultorio = new PessoaConsultorio
+                    {
+                        PecCodi = _context.PessoaConsultorios.Max(p => (int?)p.PecCodi) + 1 ?? 1,
+                        PecStat = true,
+                        PesCodi = pessoa.PesCodi,
+                        ConCodi = pessoaDTO.ConCodi
+                    };
+
+                    _context.PessoaConsultorios.Add(pessoaConsultorio);
+                    await _context.SaveChangesAsync();
+                }
+
                 await _context.SaveChangesAsync();
                 await transaction.CommitAsync();
                 return Ok("OK");
@@ -135,7 +150,7 @@ namespace API_BetterLife.Controllers
         }
 
         [HttpPut("{pesCodi}")]
-        public async Task<IActionResult> PutPessoa(long pesCodi, PessoaDTO pessoaDTO)
+        public async Task<IActionResult> EditarPessoa(long pesCodi, PessoaDTO pessoaDTO)
         {
             if (pesCodi != pessoaDTO.PesCodi)
             {
@@ -154,6 +169,64 @@ namespace API_BetterLife.Controllers
             pessoa.PesStat = pessoaDTO.PesStat;
             pessoa.TipCodi = pessoaDTO.TipCodi;
             pessoa.GenCodi = pessoaDTO.GenCodi;
+
+            _context.Entry(pessoa).State = EntityState.Modified;
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!PessoaExists(pesCodi))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            return Ok("Alterado com sucesso!");
+        }
+
+        [HttpGet("{conCodi}")]
+        public Task<ActionResult<PessoaConsultorioRetornoModel>> GetPessoaByIdConsultorio(int conCodi)
+        {
+            List<PessoaConsultorioRetornoModel> listaResultado =
+                (from pes in _context.Pessoas
+                join pesCon in _context.PessoaConsultorios on pes.PesCodi equals pesCon.PesCodi
+                join tipPes in _context.TipoPessoas on pes.TipCodi equals tipPes.TipCodi
+                where pesCon.ConCodi == conCodi
+                orderby pes.PesNome
+                select new PessoaConsultorioRetornoModel
+                {
+                    pesCodi = pes.PesCodi,
+                    pesNome = pes.PesNome,
+                    tipDesc = tipPes.TipDesc,
+                    pesStat = pes.PesStat
+                }).ToList();
+
+
+            if (listaResultado == null)
+            {
+                return Task.FromResult<ActionResult<PessoaConsultorioRetornoModel>>(NotFound());
+            }
+
+            return Task.FromResult<ActionResult<PessoaConsultorioRetornoModel>>(Ok(listaResultado));
+        }
+
+        [HttpGet("{pesCodi}/{statusAtual}")]
+        public async Task<ActionResult> AlteraStatusPessoa(long pesCodi, bool statusAtual)
+        {
+            var pessoa = await _context.Pessoas.FindAsync(pesCodi);
+            if (pessoa == null)
+            {
+                return NotFound();
+            }
+
+            pessoa.PesStat = !statusAtual;
 
             _context.Entry(pessoa).State = EntityState.Modified;
 

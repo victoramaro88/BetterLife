@@ -1,8 +1,11 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using API_BetterLife.Models;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using System;
+using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
-using Microsoft.AspNetCore.Identity;
 
 namespace API_BetterLife.Controllers
 {
@@ -11,59 +14,84 @@ namespace API_BetterLife.Controllers
     public class UtilController : Controller
     {
         private readonly IPasswordHasher<object> _passwordHasher;
+        private readonly AppDbContext _context;
 
-        public UtilController()
+        public UtilController(AppDbContext context)
         {
+            _context = context;
             _passwordHasher = new PasswordHasher<object>();
         }
 
-        [HttpGet("{login}")]
-        public string Login(string login)
+        [HttpPost]
+        public Task<ActionResult<UsuarioLogadoModel>> Login(LoginModel objLogin)
         {
-            string result = "";
-            //var a = GerarHash(login);
-            //result = Encoding.Default.GetString(a);
-
-            //-> NOVA FORMA DE UTILIZAÇÃO:
-            result = HashPassword(login);
-
-            bool validaSenha = VerifyPassword(result, login);
-
-            return result;
-        }
-
-        [NonAction]
-        public byte[] GerarHash(string value)
-        {
-            byte[] arrBytes = Encoding.ASCII.GetBytes(value);
-            byte[] result;
-            using (SHA256 shaM = SHA256.Create())
+            try
             {
-                result = shaM.ComputeHash(arrBytes);
+                UsuarioLogadoModel result = new UsuarioLogadoModel();
+
+                var objUsuario = _context.UsuarioPessoas
+                                         .Where(l => l.UsuLogi == objLogin.usuario)
+                                         .FirstOrDefault();
+
+                if (objUsuario == null)
+                {
+                    return Task.FromResult<ActionResult<UsuarioLogadoModel>>(NotFound("Usuário não encontrado."));
+                }
+
+                //string senhaCripto = CriptografarSenha(objLogin.senha!);
+
+                var validaSenha = VerifyPassword(objUsuario.UsuSenh, objLogin.senha!);
+
+                if (validaSenha == PasswordVerificationResult.Success)
+                {
+                    var objPessoa = _context.Pessoas.Where(p => p.PesCodi == objUsuario.PesCodi).FirstOrDefault();
+
+                    if (objPessoa == null)
+                    {
+                        return Task.FromResult<ActionResult<UsuarioLogadoModel>>(NotFound("Pessoa não encontrada."));
+                    }
+
+                    var objPessoaConsultorio = _context.PessoaConsultorios.Where(pc => pc.PesCodi == objUsuario.PesCodi).FirstOrDefault();
+                    if (objPessoaConsultorio == null)
+                    {
+                        return Task.FromResult<ActionResult<UsuarioLogadoModel>>(NotFound("Pessoa sem vínculo com consultório."));
+                    }
+
+                    var objConsultorio = _context.PessoaConsultorios.Where(c => c.ConCodi == objPessoaConsultorio!.ConCodi).FirstOrDefault();
+                    if (objConsultorio == null)
+                    {
+                        return Task.FromResult<ActionResult<UsuarioLogadoModel>>(NotFound("Consultório não localizado."));
+                    }
+
+                    result.usuCodi = objUsuario.UsuCodi;
+                    result.pesCodi = objPessoa.PesCodi;
+                    result.pesNome = objPessoa.PesNome;
+                    result.pecCodi = objPessoaConsultorio != null? objPessoaConsultorio!.PecCodi : 0;
+                    result.conCodi = objConsultorio != null ? objConsultorio.ConCodi : 0;
+
+                    return Task.FromResult<ActionResult<UsuarioLogadoModel>>(Ok(result));
+                }
+                else
+                {
+                    return Task.FromResult<ActionResult<UsuarioLogadoModel>>(Unauthorized("Senha incorreta."));
+                }
             }
-
-            //-> Apenas verificando a string formada pelo hash.
-            var str = Encoding.Default.GetString(result);
-
-            return result;
-        }
-
-
-
-
-
-        [NonAction]
-        public string HashPassword(string password)
-        {
-            var hashedPassword = _passwordHasher.HashPassword(null, password);
-            return hashedPassword;
+            catch (Exception e)
+            {
+                return Task.FromResult<ActionResult<UsuarioLogadoModel>>(BadRequest(e));
+            }
         }
 
         [NonAction]
-        public bool VerifyPassword(string hashedPassword, string providedPassword)
+        public PasswordVerificationResult VerifyPassword(string hashedPassword, string plainPassword)
         {
-            var verificationResult = _passwordHasher.VerifyHashedPassword(null, hashedPassword, providedPassword);
-            return verificationResult == PasswordVerificationResult.Success;
+            return _passwordHasher.VerifyHashedPassword(null, hashedPassword, plainPassword);
+        }
+
+        [NonAction]
+        public string CriptografarSenha(string senha)
+        {
+            return _passwordHasher.HashPassword(null, senha);
         }
     }
 }

@@ -9,6 +9,9 @@ import { TipoDocumentoModel } from "../models/TipoDocumento.Model";
 import { TipoContatoModel } from "../models/TipoContato.Model";
 import { PessoaDTO } from "../models/PessoaDTO.Model";
 import { ConsultorioModel } from "../models/Consultorio.Model";
+import { LoginModel } from "../models/Login.Model";
+import { UsuarioLogadoModel } from "../models/UsuarioLogado.Model";
+import { PessoaConsultorioRetornoModel } from "../models/PessoaConsultorioRetorno.Model";
 
 @Injectable({
     providedIn: 'root'
@@ -48,20 +51,34 @@ export class HttpService {
     return this.http.get<ConsultorioModel>(`${environment.apiServicos}/Consultorio/${conCodi}`);
   }
 
+  public GetPessoaByIdConsultorio(conCodi: number): Observable<PessoaConsultorioRetornoModel[]> {
+    return this.http.get<PessoaConsultorioRetornoModel[]>(`${environment.apiServicos}/Pessoa/GetPessoaByIdConsultorio/${conCodi}`);
+  }
+
+  public GetPessoaById(pesCodi: number): Observable<any> {
+    return this.http.get<any>(`${environment.apiServicos}/Pessoa/GetPessoaById/${pesCodi}`);
+  }
+
+  public AlteraStatusPessoa(pesCodi: number, statusAtual: boolean): Observable<string> {
+    return this.http.get<string>(`${environment.apiServicos}/Pessoa/AlteraStatusPessoa/${pesCodi}/${statusAtual}`);
+  }
+
   // #endregion
 
   // #region POST
-  public PostPessoa(objPessoa: PessoaDTO): Observable<string> {
-    return this.http.post<string>(`${environment.apiServicos}/Pessoa`, objPessoa);
+  public InserirPessoa(objPessoa: PessoaDTO): Observable<string> {
+    return this.http.post<string>(`${environment.apiServicos}/Pessoa/InserirPessoa`, objPessoa);
   }
 
   public PostConsultorio(objConsultorio: ConsultorioModel): Observable<string> {
     return this.http.post<string>(`${environment.apiServicos}/Consultorio`, objConsultorio);
   }
 
-  public ValidarLogin(cpf: string, senha: string): Observable<string> {
-    // return this.http.post<string>(`${environment.apiServicos}/Pessoa`, objPessoa);
-    return of("OK");
+  public ValidarLogin(usuario: string, senha: string): Observable<UsuarioLogadoModel> {
+    let objLogin: LoginModel = new LoginModel();
+    objLogin.usuario = usuario;
+    objLogin.senha = senha;
+    return this.http.post<UsuarioLogadoModel>(`${environment.apiServicos}/Util/Login`, objLogin);
   }
 
   // #endregion
