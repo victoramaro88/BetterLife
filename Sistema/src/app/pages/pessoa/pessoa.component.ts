@@ -155,9 +155,10 @@ export class PessoaComponent implements OnInit {
     try {
       this.http.GetPessoaById(pesCodi).subscribe({
         next: (response) => {
-          console.warn("Retorno:", response);
+          // console.warn("Retorno:", response);
           this.objPessoa.pesCodi = response.PesCodi;
           this.objPessoa.pesNome = response.PesNome;
+          this.objPessoa.pesNasc = new Date(response.PesNasc);
 
           this.base64Image = response.PesFoto;
           this.imagePreview = response.PesFoto;
@@ -174,9 +175,15 @@ export class PessoaComponent implements OnInit {
             };
             this.lstDocumento.push(objDoc);
           });
-          //-> FALTA FAZER COM A LISTA DE CONTATOS, COMO O DE CIMA, *******************************
-            // MAS AJUSTAR O RETORNO DOS CONTATOS QUE NÃO ESTÁ VINDO. *****************************
-          this.lstContato;
+          response.PessoaContatos.forEach((itemCtt: any) => {
+            let objContato: ContatoModel = {
+              CttCodi: itemCtt.CttCodiNavigation.CttCodi,
+              CttDesc: itemCtt.CttCodiNavigation.CttDesc,
+              CttStat: itemCtt.CttCodiNavigation.CttStat,
+              TicCodi: itemCtt.CttCodiNavigation.TicCodi
+            };
+            this.lstContato.push(objContato);
+          });
 
           this.boolEditarSalvar = true;
           this.blockLoading = false;
@@ -195,7 +202,6 @@ export class PessoaComponent implements OnInit {
     try {
       this.http.AlteraStatusPessoa(pesCodi, pesStat).subscribe({
         next: (response) => {
-          console.warn("Retorno:", response);
           if (response === "Alterado com sucesso!")
           {
             this.messageService.add({severity:'success', summary:'Sucesso!', detail: 'Alterado com sucesso!'});
@@ -305,6 +311,7 @@ export class PessoaComponent implements OnInit {
 
   Salvar() {
     this.blockLoading = true;
+
     this.objPessoa.pesStat = true;
     this.objPessoa.pesFoto = this.base64Image!;
     this.objPessoa.tipCodi = this.objTipoPessoa.TipCodi;
@@ -315,25 +322,30 @@ export class PessoaComponent implements OnInit {
 
     if (this.Valida()) {
       // console.warn("Pessoa: ", this.objPessoa);
-      try {
-        this.http.InserirPessoa(this.objPessoa).subscribe({
-          next: (response) => {
-            this.blockLoading = false;
-            if (response === "OK") {
-              this.messageService.add({ severity: 'success', summary: 'Sucesso!', detail: 'Registro salvo com sucesso!' });
-              // this.Cancelar();
+      if (this.objPessoa.pesCodi == 0) {
+        try {
+          this.http.InserirPessoa(this.objPessoa).subscribe({
+            next: (response) => {
+              this.blockLoading = false;
+              if (response === "OK") {
+                this.messageService.add({ severity: 'success', summary: 'Sucesso!', detail: 'Registro salvo com sucesso!' });
+              }
+            },
+            error: (error) => {
+              this.blockLoading = false;
+              console.error('Erro ao inserir a pessoa:', error);
+              this.messageService.add({ severity: 'error', summary: 'Erro: ', detail: 'Erro ao inserir a pessoa:' + error.status });
             }
-          },
-          error: (error) => {
-            this.blockLoading = false;
-            console.error('Erro ao inserir a pessoa:', error);
-            this.messageService.add({severity:'error', summary:'Erro: ', detail: 'Erro ao inserir a pessoa:' + error.status});
-          }
-        });
-      } catch (error) {
+          });
+        } catch (error) {
+          this.blockLoading = false;
+          console.error(error);
+          this.messageService.add({ severity: 'error', summary: 'Erro: ', detail: 'Erro ao inserir a pessoa:' + error });
+        }
+      } else {
         this.blockLoading = false;
-        console.error(error);
-        this.messageService.add({severity:'error', summary:'Erro: ', detail: 'Erro ao inserir a pessoa:' + error});
+        console.warn('FAZER ROTINA PARA ALTERAR A PESSOA');
+        this.messageService.add({ severity: 'error', summary: 'ATENÇÃO!', detail: 'FAZER ROTINA PARA ALTERAR A PESSOA' });
       }
     }
   }

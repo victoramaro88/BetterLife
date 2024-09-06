@@ -14,8 +14,7 @@ export const routes: Routes = [
   { path: 'carteira', component: CarteiraBariatricaComponent },
   { path: 'pessoa', component: PessoaComponent },
   { path: 'consultorio', component: ConsultorioComponent },
-  // { path: '**', redirectTo: 'login' }
-  { path: '**', redirectTo: 'home' }
+  { path: '**', redirectTo: 'login' }
 ];
 
 @NgModule({

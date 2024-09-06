@@ -38,7 +38,10 @@ namespace API_BetterLife.Controllers
                 .Include(p => p.CarteiraBariatricas)
                 .Include(p => p.Documentos)
                 .Include(p => p.PessoaConsultorios)
+                    .ThenInclude(c => c.ConCodiNavigation)
                 .Include(p => p.PessoaContatos)
+                    .ThenInclude(pc => pc.CttCodiNavigation)
+                    .ThenInclude(tc => tc.TicCodiNavigation)
                 .Include(p => p.UsuarioPessoas)
                 .FirstOrDefaultAsync(p => p.PesCodi == pesCodi);
 
