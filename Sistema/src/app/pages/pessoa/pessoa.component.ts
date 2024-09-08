@@ -15,6 +15,7 @@ import { Router } from '@angular/router';
 import { UsuarioLogadoModel } from '../../models/UsuarioLogado.Model';
 import { CryptoService } from '../../services/crypto.service';
 import { PessoaConsultorioRetornoModel } from '../../models/PessoaConsultorioRetorno.Model';
+import { LoginModel } from '../../models/Login.Model';
 
 
 @Component({
@@ -46,7 +47,9 @@ export class PessoaComponent implements OnInit {
   objTipoContato: TipoContatoModel = new TipoContatoModel();
   lstContato: ContatoModel[] = [];
   objContato: ContatoModel = new ContatoModel();
+  objUsuarioLogin: LoginModel = new LoginModel();
   boolEditarSalvar: boolean = false;
+  boolCadastroLogin: boolean = false;
 
   constructor(
     private http: HttpService,
@@ -155,7 +158,7 @@ export class PessoaComponent implements OnInit {
     try {
       this.http.GetPessoaById(pesCodi).subscribe({
         next: (response) => {
-          // console.warn("Retorno:", response);
+          console.warn("Retorno:", response);
           this.objPessoa.pesCodi = response.PesCodi;
           this.objPessoa.pesNome = response.PesNome;
           this.objPessoa.pesNasc = new Date(response.PesNasc);
@@ -165,6 +168,7 @@ export class PessoaComponent implements OnInit {
           this.imageName = "Imagem";
           this.objTipoPessoa = this.lstTipoPessoa.find(p => p.TipCodi === response.TipCodi)!;
           this.objGenero = this.lstGenero.find(g => g.GenCodi === response.GenCodi)!;
+          //-> Preenchendo os Documentos
           response.Documentos.forEach((item: any) => {
             let objDoc: DocumentoModel = {
               DocCodi: item.DocCodi,
@@ -175,6 +179,7 @@ export class PessoaComponent implements OnInit {
             };
             this.lstDocumento.push(objDoc);
           });
+          //-> Preenchendo os Contatos
           response.PessoaContatos.forEach((itemCtt: any) => {
             let objContato: ContatoModel = {
               CttCodi: itemCtt.CttCodiNavigation.CttCodi,
@@ -184,6 +189,12 @@ export class PessoaComponent implements OnInit {
             };
             this.lstContato.push(objContato);
           });
+          //-> Verificando se possui usuário cadastrado
+          if(response.UsuarioPessoas.length > 0) {
+            this.boolCadastroLogin = true;
+            this.objUsuarioLogin.usuario = response.UsuarioPessoas[0].UsuLogi;
+            this.objUsuarioLogin.senha = response.UsuarioPessoas[0].UsuSenh;
+          }
 
           this.boolEditarSalvar = true;
           this.blockLoading = false;

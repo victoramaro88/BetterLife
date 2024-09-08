@@ -215,9 +215,9 @@
 
         </div>
         <!-- FOTO -->
-        <div class="field col-12">
+        <div class="field col-6">
           <label for="fileUpload">Foto</label><br />
-          <div class="flex align-items-center gap-2">
+          <div class=" align-items-center gap-2">
             <button
               pButton
               type="button"
@@ -226,6 +226,7 @@
               (click)="fileInput.click()"
               size="small"
             ></button>
+            <br><br>
             <input
               type="file"
               accept="image/*"
@@ -244,13 +245,23 @@
             </div>
           </div>
         </div>
-
-        <!-- BOTÕES -->
-        <!-- <div class="field col-12 text-right">
-          <p-button (onClick)="Salvar();" label="Salvar" [raised]="true" severity="success" size="small" />
-          &nbsp;
-          <p-button (onClick)="Cancelar();" label="Cancelar" [raised]="true" severity="danger" size="small" />
-        </div> -->
+        <!-- USUÁRIO -->
+        <div class="field col-6">
+          <label for="cadLogin">Deseja cadastrar um login?</label><br>
+          <p-inputSwitch id="cadLogin" [(ngModel)]="boolCadastroLogin" /><br>
+          <div class="mt-2" *ngIf="boolCadastroLogin">
+            <div class="field col-12 md:col-12">
+              <label for="usuLogin">Usuário</label><br>
+              <input id="usuLogin" type="text" pInputText [(ngModel)]="objUsuarioLogin.usuario" class="w-full"/>
+            </div>
+            <div class="field col-12 md:col-12">
+              <label for="usuSenh">Senha</label><br>
+              <div class="p-fluid">
+                <p-password id="usuSenh" [(ngModel)]="objUsuarioLogin.senha" [toggleMask]="true" class="full-width" [feedback]="false"/>
+              </div>
+            </div>
+          </div>
+        </div>]
       </div>
 
       <!-- BOTÕES -->
