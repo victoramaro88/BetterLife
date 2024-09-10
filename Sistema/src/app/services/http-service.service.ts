@@ -69,6 +69,9 @@ export class HttpService {
   public InserirPessoa(objPessoa: PessoaDTO): Observable<string> {
     return this.http.post<string>(`${environment.apiServicos}/Pessoa/InserirPessoa`, objPessoa);
   }
+  public EditarPessoa(pesCodi: number, objPessoa: PessoaDTO): Observable<string> {
+    return this.http.put<string>(`${environment.apiServicos}/Pessoa/EditarPessoa/${pesCodi}`, objPessoa);
+  }
 
   public PostConsultorio(objConsultorio: ConsultorioModel): Observable<string> {
     return this.http.post<string>(`${environment.apiServicos}/Consultorio`, objConsultorio);

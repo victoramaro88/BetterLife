@@ -191,9 +191,9 @@ export class PessoaComponent implements OnInit {
           });
           //-> Verificando se possui usuário cadastrado
           if(response.UsuarioPessoas.length > 0) {
-            this.boolCadastroLogin = true;
+            // this.boolCadastroLogin = true;
             this.objUsuarioLogin.usuario = response.UsuarioPessoas[0].UsuLogi;
-            this.objUsuarioLogin.senha = response.UsuarioPessoas[0].UsuSenh;
+            this.objUsuarioLogin.senha = "";
           }
 
           this.boolEditarSalvar = true;
@@ -330,6 +330,12 @@ export class PessoaComponent implements OnInit {
     this.objPessoa.conCodi = this.novoObjUsr.conCodi;
     this.objPessoa.listaDocumentos = this.lstDocumento;
     this.objPessoa.listaContatos = this.lstContato;
+    if (this.boolCadastroLogin) {
+      this.objPessoa.objLogin = this.objUsuarioLogin;
+    } else {
+      this.objPessoa.objLogin.usuario = "";
+      this.objPessoa.objLogin.senha = "";
+    }
 
     if (this.Valida()) {
       // console.warn("Pessoa: ", this.objPessoa);
@@ -340,6 +346,7 @@ export class PessoaComponent implements OnInit {
               this.blockLoading = false;
               if (response === "OK") {
                 this.messageService.add({ severity: 'success', summary: 'Sucesso!', detail: 'Registro salvo com sucesso!' });
+                this.Cancelar();
               }
             },
             error: (error) => {
@@ -354,9 +361,20 @@ export class PessoaComponent implements OnInit {
           this.messageService.add({ severity: 'error', summary: 'Erro: ', detail: 'Erro ao inserir a pessoa:' + error });
         }
       } else {
-        this.blockLoading = false;
-        console.warn('FAZER ROTINA PARA ALTERAR A PESSOA');
-        this.messageService.add({ severity: 'error', summary: 'ATENÇÃO!', detail: 'FAZER ROTINA PARA ALTERAR A PESSOA' });
+        this.http.EditarPessoa(this.objPessoa.pesCodi, this.objPessoa).subscribe({
+          next: (response) => {
+            this.blockLoading = false;
+            if (response === "Alterado com sucesso!") {
+              this.messageService.add({ severity: 'success', summary: 'Sucesso!', detail: 'Registro salvo com sucesso!' });
+              this.Cancelar();
+            }
+          },
+          error: (error) => {
+            this.blockLoading = false;
+            console.error('Erro ao editar a pessoa:', error);
+            this.messageService.add({ severity: 'error', summary: 'Erro: ', detail: 'Erro ao editar a pessoa:' + error.status });
+          }
+        });
       }
     }
   }
@@ -379,6 +397,8 @@ export class PessoaComponent implements OnInit {
     this.base64Image = '';
 
     this.boolEditarSalvar = false;
+    this.boolCadastroLogin = false;
+    this.objUsuarioLogin = new LoginModel();
 
     // this.router.navigate(['/home']);
     this.GetPessoaByIdConsultorio(this.novoObjUsr.conCodi);

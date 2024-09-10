@@ -1,6 +1,8 @@
 ﻿using API_BetterLife.Models;
+using API_BetterLife.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System;
 
 namespace API_BetterLife.Controllers
 {
@@ -9,10 +11,12 @@ namespace API_BetterLife.Controllers
     public class PessoaController : ControllerBase
     {
         private readonly AppDbContext _context;
+        private readonly IUtilService _utilService;
 
-        public PessoaController(AppDbContext context)
+        public PessoaController(AppDbContext context, IUtilService utilService)
         {
             _context = context;
+            _utilService = utilService;
         }
 
         [HttpGet]
@@ -127,7 +131,7 @@ namespace API_BetterLife.Controllers
                 }
 
                 //-> Adicionando na tabela de PessoaConsultorio
-                if(pessoaDTO.ConCodi > 0)
+                if (pessoaDTO.ConCodi > 0)
                 {
                     var pessoaConsultorio = new PessoaConsultorio
                     {
@@ -138,6 +142,22 @@ namespace API_BetterLife.Controllers
                     };
 
                     _context.PessoaConsultorios.Add(pessoaConsultorio);
+                    await _context.SaveChangesAsync();
+                }
+
+                //-> Se possuir usuário no objeto, cadastra
+                if(pessoaDTO.objLogin!.usuario != "")
+                {
+                    var usuarioPessoa = new UsuarioPessoa
+                    {
+                        UsuCodi = _context.UsuarioPessoas.Max(p => (int?)p.UsuCodi) + 1 ?? 1,
+                        UsuLogi = pessoaDTO.objLogin.usuario!.ToString(),
+                        UsuSenh = pessoaDTO.objLogin.senha!.ToString(),
+                        UsuStat = true,
+                        PesCodi = pessoa.PesCodi,
+                        TusCodi = 2
+                    };
+                    _context.UsuarioPessoas.Add(usuarioPessoa);
                     await _context.SaveChangesAsync();
                 }
 
@@ -155,32 +175,108 @@ namespace API_BetterLife.Controllers
         [HttpPut("{pesCodi}")]
         public async Task<IActionResult> EditarPessoa(long pesCodi, PessoaDTO pessoaDTO)
         {
-            if (pesCodi != pessoaDTO.PesCodi)
-            {
-                return BadRequest();
-            }
-
-            var pessoa = await _context.Pessoas.FindAsync(pesCodi);
-            if (pessoa == null)
-            {
-                return NotFound();
-            }
-
-            pessoa.PesNome = pessoaDTO.PesNome;
-            pessoa.PesFoto = pessoaDTO.PesFoto;
-            pessoa.PesNasc = pessoaDTO.PesNasc;
-            pessoa.PesStat = pessoaDTO.PesStat;
-            pessoa.TipCodi = pessoaDTO.TipCodi;
-            pessoa.GenCodi = pessoaDTO.GenCodi;
-
-            _context.Entry(pessoa).State = EntityState.Modified;
+            using var transaction = await _context.Database.BeginTransactionAsync();
 
             try
             {
+                if (pesCodi != pessoaDTO.PesCodi)
+                {
+                    return BadRequest("Identificador da pessoa inválido.");
+                }
+
+                var pessoa = await _context.Pessoas.FindAsync(pesCodi);
+                if (pessoa == null)
+                {
+                    return NotFound("Pessoa não encontrada");
+                }
+
+                // Atualização da pessoa
+                pessoa.PesNome = pessoaDTO.PesNome;
+                pessoa.PesFoto = pessoaDTO.PesFoto;
+                pessoa.PesNasc = pessoaDTO.PesNasc;
+                pessoa.PesStat = pessoaDTO.PesStat;
+                pessoa.TipCodi = pessoaDTO.TipCodi;
+                pessoa.GenCodi = pessoaDTO.GenCodi;
+                _context.Entry(pessoa).State = EntityState.Modified;
+
+                // Remover e adicionar contatos
+                var lstPessoaCttRemover = _context.PessoaContatos
+                                           .Where(pc => pc.PesCodi == pesCodi).ToList();
+                _context.PessoaContatos.RemoveRange(lstPessoaCttRemover);
+
+                if (pessoaDTO.listaContatos?.Count > 0)
+                {
+                    foreach (var item in pessoaDTO.listaContatos)
+                    {
+                        var contato = new Contato
+                        {
+                            CttCodi = _context.Contatos.Max(p => (long?)p.CttCodi) + 1 ?? 1,
+                            CttDesc = item.CttDesc,
+                            CttStat = true,
+                            TicCodi = item.TicCodi
+                        };
+
+                        _context.Contatos.Add(contato);
+                        await _context.SaveChangesAsync();
+
+                        var pessoaContato = new PessoaContato
+                        {
+                            PctCodi = _context.PessoaContatos
+                                .OrderByDescending(lastId => lastId)
+                                .Select(lastId => lastId.PctCodi).FirstOrDefault() + 1,
+                            CttCodi = contato.CttCodi,
+                            PctStat = true,
+                            PesCodi = pessoa.PesCodi
+                        };
+
+                        _context.PessoaContatos.Add(pessoaContato);
+                        await _context.SaveChangesAsync();
+                    }
+                }
+
+                // Remover e adicionar documentos
+                var lstDocsRemover = _context.Documentos.Where(pc => pc.PesCodi == pesCodi).ToList();
+                _context.Documentos.RemoveRange(lstDocsRemover);
+
+                if (pessoaDTO.listaDocumentos?.Count > 0)
+                {
+                    foreach (var item in pessoaDTO.listaDocumentos)
+                    {
+                        var documento = new Documento
+                        {
+                            DocCodi = _context.Documentos.Max(p => (long?)p.DocCodi) + 1 ?? 1,
+                            DocNume = item.DocNume,
+                            DocStat = true,
+                            PesCodi = pessoa.PesCodi,
+                            TidCodi = item.TidCodi
+                        };
+
+                        _context.Documentos.Add(documento);
+                        await _context.SaveChangesAsync();
+                    }
+                }
+
+                // Atualização de usuário
+                if (pessoaDTO.objLogin!.usuario != "")
+                {
+                    //var usuarioPessoa = await _context.UsuarioPessoas.FindAsync(pesCodi);
+                    var usuarioPessoa = await _context.UsuarioPessoas.AsNoTracking().FirstOrDefaultAsync(u => u.PesCodi == pesCodi);
+                    if (usuarioPessoa != null)
+                    {
+                        usuarioPessoa.UsuLogi = pessoaDTO.objLogin.usuario!;
+                        usuarioPessoa.UsuSenh = _utilService.CriptografarSenha(pessoaDTO.objLogin.senha!);
+                        _context.Entry(usuarioPessoa).State = EntityState.Modified;
+                    }
+                }
+
+                // Salvar todas as mudanças de uma vez
                 await _context.SaveChangesAsync();
+                await transaction.CommitAsync();
             }
             catch (DbUpdateConcurrencyException)
             {
+                await transaction.RollbackAsync();
+
                 if (!PessoaExists(pesCodi))
                 {
                     return NotFound();
@@ -199,17 +295,17 @@ namespace API_BetterLife.Controllers
         {
             List<PessoaConsultorioRetornoModel> listaResultado =
                 (from pes in _context.Pessoas
-                join pesCon in _context.PessoaConsultorios on pes.PesCodi equals pesCon.PesCodi
-                join tipPes in _context.TipoPessoas on pes.TipCodi equals tipPes.TipCodi
-                where pesCon.ConCodi == conCodi
-                orderby pes.PesNome
-                select new PessoaConsultorioRetornoModel
-                {
-                    pesCodi = pes.PesCodi,
-                    pesNome = pes.PesNome,
-                    tipDesc = tipPes.TipDesc,
-                    pesStat = pes.PesStat
-                }).ToList();
+                 join pesCon in _context.PessoaConsultorios on pes.PesCodi equals pesCon.PesCodi
+                 join tipPes in _context.TipoPessoas on pes.TipCodi equals tipPes.TipCodi
+                 where pesCon.ConCodi == conCodi
+                 orderby pes.PesNome
+                 select new PessoaConsultorioRetornoModel
+                 {
+                     pesCodi = pes.PesCodi,
+                     pesNome = pes.PesNome,
+                     tipDesc = tipPes.TipDesc,
+                     pesStat = pes.PesStat
+                 }).ToList();
 
 
             if (listaResultado == null)

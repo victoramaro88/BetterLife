@@ -247,7 +247,7 @@
         </div>
         <!-- USUÁRIO -->
         <div class="field col-6">
-          <label for="cadLogin">Deseja cadastrar um login?</label><br>
+          <label for="cadLogin">Deseja {{objPessoa.pesCodi > 0 ? 'editar' : 'cadastrar'}}  o login?</label><br>
           <p-inputSwitch id="cadLogin" [(ngModel)]="boolCadastroLogin" /><br>
           <div class="mt-2" *ngIf="boolCadastroLogin">
             <div class="field col-12 md:col-12">
@@ -261,7 +261,7 @@
               </div>
             </div>
           </div>
-        </div>]
+        </div>
       </div>
 
       <!-- BOTÕES -->

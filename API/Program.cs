@@ -1,5 +1,6 @@
 using API_BetterLife;
 using API_BetterLife.Models;
+using API_BetterLife.Services;
 using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.EntityFrameworkCore;
 
@@ -34,6 +35,8 @@ builder.Services.AddControllers().AddJsonOptions(options =>
 {
     options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
 });
+
+builder.Services.AddScoped<IUtilService, UtilService>();
 
 builder.Services.AddEndpointsApiExplorer();
 
