@@ -158,7 +158,7 @@ export class PessoaComponent implements OnInit {
     try {
       this.http.GetPessoaById(pesCodi).subscribe({
         next: (response) => {
-          console.warn("Retorno:", response);
+          // console.warn("Retorno:", response);
           this.objPessoa.pesCodi = response.PesCodi;
           this.objPessoa.pesNome = response.PesNome;
           this.objPessoa.pesNasc = new Date(response.PesNasc);
@@ -407,9 +407,10 @@ export class PessoaComponent implements OnInit {
   Valida() {
     //-> Verificando se o cadastro possui um número de CPF como documento:
     let possuiCPF: boolean = false;
-    this.objPessoa.listaDocumentos.forEach(itemDoc => {
-      possuiCPF = itemDoc.TidCodi === 1;
-    });
+    let indexCPF = this.objPessoa.listaDocumentos.findIndex(c => c.TidCodi === 1);
+    if (indexCPF >= 0) {
+      possuiCPF = true;
+    }
 
     if (this.objPessoa.pesNome.length >= 5) {
       if (this.objPessoa.pesNasc.getFullYear() !== new Date().getFullYear()) {
@@ -417,35 +418,38 @@ export class PessoaComponent implements OnInit {
           if (this.objPessoa.genCodi > 0) {
             if (this.objPessoa.pesFoto && this.objPessoa.pesFoto.length > 0) {
               let medico: boolean = false;
+              //-> Verificando se é médico, e se está com o CRM cadastrado.
               if (this.objPessoa.tipCodi === 1) {
-                this.objPessoa.listaDocumentos.forEach(item => {
-                  medico = item.TidCodi === this.objPessoa.tipCodi;
-                });
+                let indexMedico = this.objPessoa.listaDocumentos.findIndex(c => c.TidCodi === 2);
+                if (indexMedico >= 0) {
+                  medico = true;
+                }
               }
-              if (this.objPessoa.tipCodi !== 1 || !medico) {
-                if (this.lstDocumento.length > 0) {
-                  if (this.lstContato.length > 0) {
-                    if (possuiCPF) {
-                      return true;
-                    } else {
-                      this.blockLoading = false;
-                      this.messageService.add({severity:'warn', summary:'Atenção: ', detail: 'Documento CPF é obrigatório para o cadastro.'});
-                      return false;
-                    }
+
+              if (this.objPessoa.tipCodi == 1 && !medico) {
+                this.blockLoading = false;
+                this.messageService.add({severity:'warn', summary:'Atenção: ', detail: 'O Médico precisa ter um CRM cadastrado.'});
+                return false;
+              }
+
+
+              if (this.lstDocumento.length > 0) {
+                if (this.lstContato.length > 0) {
+                  if (possuiCPF) {
+                    return true;
                   } else {
                     this.blockLoading = false;
-                    this.messageService.add({severity:'warn', summary:'Atenção: ', detail: 'Adicione pelo menos um contato da pessoa.'});
+                    this.messageService.add({severity:'warn', summary:'Atenção: ', detail: 'Documento CPF é obrigatório para o cadastro.'});
                     return false;
                   }
                 } else {
                   this.blockLoading = false;
-                  this.messageService.add({severity:'warn', summary:'Atenção: ', detail: 'Adicione pelo menos um documento da pessoa.'});
+                  this.messageService.add({severity:'warn', summary:'Atenção: ', detail: 'Adicione pelo menos um contato da pessoa.'});
                   return false;
                 }
-
               } else {
                 this.blockLoading = false;
-                this.messageService.add({severity:'warn', summary:'Atenção: ', detail: 'O Médico precisa ter um CRM cadastrado.'});
+                this.messageService.add({severity:'warn', summary:'Atenção: ', detail: 'Adicione pelo menos um documento da pessoa.'});
                 return false;
               }
             } else {

@@ -146,13 +146,13 @@ namespace API_BetterLife.Controllers
                 }
 
                 //-> Se possuir usuário no objeto, cadastra
-                if(pessoaDTO.objLogin!.usuario != "")
+                if (pessoaDTO.objLogin!.usuario != "")
                 {
                     var usuarioPessoa = new UsuarioPessoa
                     {
                         UsuCodi = _context.UsuarioPessoas.Max(p => (int?)p.UsuCodi) + 1 ?? 1,
                         UsuLogi = pessoaDTO.objLogin.usuario!.ToString(),
-                        UsuSenh = pessoaDTO.objLogin.senha!.ToString(),
+                        UsuSenh = _utilService.CriptografarSenha(pessoaDTO.objLogin.senha!),
                         UsuStat = true,
                         PesCodi = pessoa.PesCodi,
                         TusCodi = 2
@@ -259,13 +259,30 @@ namespace API_BetterLife.Controllers
                 // Atualização de usuário
                 if (pessoaDTO.objLogin!.usuario != "")
                 {
-                    //var usuarioPessoa = await _context.UsuarioPessoas.FindAsync(pesCodi);
-                    var usuarioPessoa = await _context.UsuarioPessoas.AsNoTracking().FirstOrDefaultAsync(u => u.PesCodi == pesCodi);
-                    if (usuarioPessoa != null)
+                    //-> Verificando se existe o registro, se sim, altera, senão, insere
+                    if (UsuarioPessoaExists(pessoa.PesCodi))
                     {
-                        usuarioPessoa.UsuLogi = pessoaDTO.objLogin.usuario!;
-                        usuarioPessoa.UsuSenh = _utilService.CriptografarSenha(pessoaDTO.objLogin.senha!);
-                        _context.Entry(usuarioPessoa).State = EntityState.Modified;
+                        var usuarioPessoa = await _context.UsuarioPessoas.AsNoTracking().FirstOrDefaultAsync(u => u.PesCodi == pesCodi);
+                        if (usuarioPessoa != null)
+                        {
+                            usuarioPessoa.UsuLogi = pessoaDTO.objLogin.usuario!;
+                            usuarioPessoa.UsuSenh = _utilService.CriptografarSenha(pessoaDTO.objLogin.senha!);
+                            _context.Entry(usuarioPessoa).State = EntityState.Modified;
+                        }
+                    }
+                    else
+                    {
+                        var usuarioPessoa = new UsuarioPessoa
+                        {
+                            UsuCodi = _context.UsuarioPessoas.Max(p => (int?)p.UsuCodi) + 1 ?? 1,
+                            UsuLogi = pessoaDTO.objLogin.usuario!.ToString(),
+                            UsuSenh = _utilService.CriptografarSenha(pessoaDTO.objLogin.senha!),
+                            UsuStat = true,
+                            PesCodi = pessoa.PesCodi,
+                            TusCodi = 2
+                        };
+                        _context.UsuarioPessoas.Add(usuarioPessoa);
+                        await _context.SaveChangesAsync();
                     }
                 }
 
@@ -366,6 +383,11 @@ namespace API_BetterLife.Controllers
         private bool PessoaExists(long id)
         {
             return _context.Pessoas.Any(e => e.PesCodi == id);
+        }
+
+        private bool UsuarioPessoaExists(long PesCodi)
+        {
+            return _context.UsuarioPessoas.Any(e => e.PesCodi == PesCodi);
         }
     }
 }
