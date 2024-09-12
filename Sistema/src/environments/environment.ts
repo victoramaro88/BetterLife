@@ -6,7 +6,8 @@ export const environment = {
   apiServicos: "https://localhost:5225/api",
   // apiServicos: "https://www.victoramaro.com.br/BetterLife/_API/api",
   // urlValidaCarteira: "http://localhost:4200/valida/"
-  urlValidaCarteira: "https://www.victoramaro.com.br/BetterLife/valida/"
+  urlValidaCarteira: "https://www.victoramaro.com.br/BetterLife/valida/",
+  linkExibirCarteira: "http://localhost:4200/carteira?data="
 };
 
 /*-> INFORMAÇÕES SOBRE LINKS PARA VALIDAR CARTEIRA:

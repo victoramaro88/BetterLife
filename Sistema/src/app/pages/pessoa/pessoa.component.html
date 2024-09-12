@@ -16,33 +16,45 @@
       [rows]="5"
       [tableStyle]="{ 'min-width': '50rem' }"
       [rowsPerPageOptions]="[5, 10, 20]"
-
       >
         <ng-template pTemplate="header">
             <tr>
-                <th>Código</th>
-                <th>Nome</th>
-                <th>Tipo de Pessoa</th>
-                <th>Status</th>
-                <th>Opções</th>
+              <th style="text-align: center;">Código</th>
+              <th style="text-align: center;">CPF</th>
+              <th style="text-align: center;">Nome</th>
+              <th style="text-align: center;">Tipo de Pessoa</th>
+              <th style="text-align: center;">Status</th>
+              <th style="text-align: center;">Opções</th>
             </tr>
         </ng-template>
         <ng-template pTemplate="body" let-item>
             <tr>
-                <td>{{ item.pesCodi }}</td>
+                <td style="text-align: center;">{{ item.pesCodi }}</td>
+                <td style="text-align: center;">{{ item.pesCPF | cpfMask }}</td>
                 <td>{{ item.pesNome }}</td>
-                <td>{{ item.tipDesc }}</td>
-                <td>{{ item.pesStat ? 'Ativo' : 'Inativo' }}</td>
-                <td>
-                  <p-button (onClick)="AlteraStatusPessoa(item.pesCodi, item.pesStat);" *ngIf="!item.pesStat" pTooltip="Ativar Pessoa" tooltipPosition="left"  icon="pi pi-lock-open" [rounded]="true" [text]="true" severity="danger" size="small" />
-                  <p-button (onClick)="AlteraStatusPessoa(item.pesCodi, item.pesStat);" *ngIf="item.pesStat" pTooltip="Inativar Pessoa" tooltipPosition="left" icon="pi pi-lock" [rounded]="true" [text]="true" severity="success" size="small" />
+                <td style="text-align: center;">{{ item.tipDesc }}</td>
+                <td style="text-align: center;">{{ item.pesStat ? 'Ativo' : 'Inativo' }}</td>
+                <td style="text-align: center;">
+                  <p-button (onClick)="ExibirLink(item.pesCPF);"
+                  *ngIf="item.tipDesc === 'Paciente'"
+                  pTooltip="Link da Carteira"
+                  tooltipPosition="left"
+                  icon="pi pi-id-card"
+                  [rounded]="true"
+                  [text]="true"
+                  severity="info" />
+
                   <p-button (onClick)="GetPessoaById(item.pesCodi);"
-                    pTooltip="Editar"
-                    tooltipPosition="left"
-                    icon="pi pi-pen-to-square"
-                    [rounded]="true"
-                    [text]="true"
-                    severity="secondary" />
+                  pTooltip="Editar"
+                  tooltipPosition="left"
+                  icon="pi pi-pen-to-square"
+                  [rounded]="true"
+                  [text]="true"
+                  severity="secondary" />
+
+                  <p-button (onClick)="AlteraStatusPessoa(item.pesCodi, item.pesStat);" *ngIf="!item.pesStat" pTooltip="Ativar Pessoa" tooltipPosition="left"  icon="pi pi-lock-open" [rounded]="true" [text]="true" severity="danger" size="small" />
+
+                  <p-button (onClick)="AlteraStatusPessoa(item.pesCodi, item.pesStat);" *ngIf="item.pesStat" pTooltip="Inativar Pessoa" tooltipPosition="left" icon="pi pi-lock" [rounded]="true" [text]="true" severity="success" size="small" />
                 </td>
             </tr>
         </ng-template>
@@ -276,3 +288,29 @@
     </p-card>
   </div>
 </div>
+
+
+<p-dialog
+    header="Link da Carteira"
+    [modal]="true"
+    [(visible)]="boolVisualizaLink"
+    [style]="{ width: '50rem' }"
+    [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }"
+>
+        <div class="grid mt-2">
+            <div class="col-8 mt-3">{{urlLinkCarteira}}</div>
+            <div class="col-4">
+              <p-button (onClick)="CopiarTexto();"
+                    pTooltip="Copiar para área de transferência"
+                    tooltipPosition="left"
+                    icon="pi pi-clipboard"
+                    [rounded]="true"
+                    [text]="true"
+                    severity="success"
+              />
+            </div>
+            <div class="col-12 text-center">
+              <small style="color: green;">{{mensagem}}</small>
+            </div>
+        </div>
+</p-dialog>

@@ -39,7 +39,7 @@ export class CarteiraBariatricaComponent implements OnInit {
       });
 
       if (this.docNume) {
-        this.GetCarteira(this.base64Service.decodeBase64ToString(this.docNume));
+        this.GetCarteiraByCPF(this.base64Service.decodeBase64ToString(this.docNume));
       }
 
       //-> Montando o QR-Code da carteira
@@ -55,9 +55,9 @@ export class CarteiraBariatricaComponent implements OnInit {
     }
   }
 
-  GetCarteira(docNume: string) {
+  GetCarteiraByCPF(docNume: string) {
     try {
-      this.http.GetCarteira(docNume).subscribe({
+      this.http.GetCarteiraByCPF(docNume).subscribe({
         next: (response) => {
           this.objCarteira = response;
 

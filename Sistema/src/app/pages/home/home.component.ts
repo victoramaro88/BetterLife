@@ -37,6 +37,10 @@ export class HomeComponent implements OnInit {
           route: '/consultorio'
         },
         {
+          label: 'Carteira',
+          route: '/cadastro-carteira'
+        },
+        {
           label: 'Logout',
           command: () => {
             this.logout();

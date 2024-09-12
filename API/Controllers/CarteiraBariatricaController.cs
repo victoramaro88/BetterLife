@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace API_BetterLife.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/[controller]/[action]")]
     [ApiController]
     public class CarteiraBariatricaController : ControllerBase
     {
@@ -22,7 +22,7 @@ namespace API_BetterLife.Controllers
         }
 
         [HttpGet("{docNume}")]
-        public Task<ActionResult<IEnumerable<CarteiraBariatrica>>> GetCarteira(string docNume)
+        public Task<ActionResult<IEnumerable<CarteiraBariatrica>>> GetCarteiraByCPF(string docNume)
         {
             try
             {
@@ -59,6 +59,63 @@ namespace API_BetterLife.Controllers
                                     carDtCi = carteira.CarDtCi,
                                     pesFoto = pessoa.PesFoto,
                                     conFoto = consultorio.ConFoto
+                                };
+
+                    var result = query.FirstOrDefault();
+
+                    if (result != null)
+                    {
+                        return Task.FromResult<ActionResult<IEnumerable<CarteiraBariatrica>>>(Ok(result));
+                    }
+                }
+
+                return Task.FromResult<ActionResult<IEnumerable<CarteiraBariatrica>>>(NotFound());
+            }
+            catch (Exception ex)
+            {
+                return Task.FromResult<ActionResult<IEnumerable<CarteiraBariatrica>>>(
+                    BadRequest(ex.Message + " \n " + ex.InnerException?.Message));
+            }
+        }
+
+        [HttpGet("{conCodi}")]
+        public Task<ActionResult<IEnumerable<CarteiraBariatrica>>> GetCarteiraByConsultorio(int conCodi)
+        {
+            try
+            {
+                using (var context = new AppDbContext())
+                {
+                    var query = from carteira in context.CarteiraBariatricas
+                                join tipoCirurgia in context.TipoCirurgia
+                                on carteira.TpcCodi equals tipoCirurgia.TpcCodi
+                                join hosp in context.Hospitals
+                                on carteira.HosCodi equals hosp.HosCodi
+                                join pessoa in context.Pessoas
+                                on carteira.PesCodi equals pessoa.PesCodi
+                                join pessoaCons in context.PessoaConsultorios
+                                on carteira.PecCodi equals pessoaCons.PecCodi
+                                join consultorio in context.Consultorios
+                                on pessoaCons.ConCodi equals consultorio.ConCodi
+                                join medico in context.Pessoas
+                                on pessoaCons.PesCodi equals medico.PesCodi
+                                join crm in context.Documentos
+                                on medico.PesCodi equals crm.PesCodi
+                                join documento in context.Documentos
+                                on pessoa.PesCodi equals documento.PesCodi
+                                where consultorio.ConCodi == conCodi
+                                select new
+                                {
+                                    carCodi = carteira.CarCodi,
+                                    pesNome = pessoa.PesNome,
+                                    docNume = documento.DocNume,
+                                    medicoNome = medico.PesNome,
+                                    //crmMedico = crm.DocNume,
+                                    tpcDesc = tipoCirurgia.TpcDesc,
+                                    hosDesc = hosp.HosDesc,
+                                    //conDesc = consultorio.ConDesc,
+                                    carDtCi = carteira.CarDtCi,
+                                    //pesFoto = pessoa.PesFoto,
+                                    //conFoto = consultorio.ConFoto
                                 };
 
                     var result = query.FirstOrDefault();

@@ -1,3 +1,5 @@
+import { Base64Service } from './../../services/base64.service';
+import { environment } from './../../../environments/environment';
 import { Component, OnInit } from '@angular/core';
 import { PessoaDTO } from '../../models/PessoaDTO.Model';
 import { ImportsModule } from '../../imports';
@@ -50,13 +52,16 @@ export class PessoaComponent implements OnInit {
   objUsuarioLogin: LoginModel = new LoginModel();
   boolEditarSalvar: boolean = false;
   boolCadastroLogin: boolean = false;
+  boolVisualizaLink: boolean = false;
+  urlLinkCarteira: string = "";
 
   constructor(
     private http: HttpService,
     private messageService: MessageService,
     private utils: Utils,
     private router: Router,
-    private cryptoService: CryptoService
+    private cryptoService: CryptoService,
+    private base64Service: Base64Service
   ) { }
 
   ngOnInit(): void {
@@ -142,6 +147,7 @@ export class PessoaComponent implements OnInit {
       this.http.GetPessoaByIdConsultorio(conCodi).subscribe({
         next: (response) => {
           this.listaPessoaConsultorio = response;
+          console.warn(this.listaPessoaConsultorio);
           this.GetTipoDocumento();
         },
         error: (error) => {
@@ -487,6 +493,34 @@ export class PessoaComponent implements OnInit {
   RetornaNomeCtt(TicCodi: number) {
     let ret = this.lstTipoContato.find(d => d.TicCodi === TicCodi);
     return ret?.TicDesc;
+  }
+
+  ExibirLink(pesCodi: number) {
+    console.warn(pesCodi);
+    this.urlLinkCarteira = environment.linkExibirCarteira + this.base64Service.convertNumberToBase64(pesCodi);
+    this.boolVisualizaLink = true;
+  }
+
+  mensagem: string = "";
+  CopiarTexto() {
+    // Verifica se o navegador suporta a Clipboard API
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(this.urlLinkCarteira)
+        .then(() => {
+          this.mensagem = 'Texto copiado com sucesso!';
+          // Limpa a mensagem após 3 segundos
+          setTimeout(() => {
+            this.mensagem = '';
+          }, 3000);
+        })
+        .catch(err => {
+          console.error('Erro ao copiar texto: ', err);
+          this.mensagem = 'Falha ao copiar o texto.';
+        });
+    } else {
+      console.warn('Clipboard API não suportada');
+      this.mensagem = 'Clipboard API não suportada neste navegador.';
+    }
   }
 
   // #region PARÂMETROS DA IMAGEM

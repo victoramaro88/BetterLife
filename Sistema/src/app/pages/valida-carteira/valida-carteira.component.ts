@@ -41,12 +41,12 @@ export class ValidaCarteiraComponent implements OnInit {
 
   ValidaCarteira(docNume: string) {
     console.info(docNume);
-    this.GetCarteira(docNume);
+    this.GetCarteiraByCPF(docNume);
   }
 
-  GetCarteira(docNume: string) {
+  GetCarteiraByCPF(docNume: string) {
     try {
-      this.http.GetCarteira(docNume).subscribe({
+      this.http.GetCarteiraByCPF(docNume).subscribe({
         next: (response) => {
           this.objCarteira = response;
 

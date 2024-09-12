@@ -21,6 +21,7 @@ import { InputMaskModule } from 'primeng/inputmask';
 import { ImageModule } from 'primeng/image';
 import { TooltipModule } from 'primeng/tooltip';
 import { CardModule } from 'primeng/card';
+import { DialogModule } from 'primeng/dialog';
 
 @NgModule({
   imports: [
@@ -44,7 +45,8 @@ import { CardModule } from 'primeng/card';
     InputMaskModule,
     ImageModule,
     TooltipModule,
-    CardModule
+    CardModule,
+    DialogModule
   ],
   exports: [
     CommonModule,
@@ -67,7 +69,8 @@ import { CardModule } from 'primeng/card';
     InputMaskModule,
     ImageModule,
     TooltipModule,
-    CardModule
+    CardModule,
+    DialogModule
   ],
   providers: [provideNgxMask()]
 })

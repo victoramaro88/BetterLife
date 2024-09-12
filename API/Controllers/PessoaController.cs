@@ -314,11 +314,13 @@ namespace API_BetterLife.Controllers
                 (from pes in _context.Pessoas
                  join pesCon in _context.PessoaConsultorios on pes.PesCodi equals pesCon.PesCodi
                  join tipPes in _context.TipoPessoas on pes.TipCodi equals tipPes.TipCodi
-                 where pesCon.ConCodi == conCodi
+                 join doc in _context.Documentos on pes.PesCodi equals doc.PesCodi
+                 where pesCon.ConCodi == conCodi && doc.TidCodi == 1
                  orderby pes.PesNome
                  select new PessoaConsultorioRetornoModel
                  {
                      pesCodi = pes.PesCodi,
+                     pesCPF = doc.DocNume,
                      pesNome = pes.PesNome,
                      tipDesc = tipPes.TipDesc,
                      pesStat = pes.PesStat

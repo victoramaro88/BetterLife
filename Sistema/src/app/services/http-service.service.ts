@@ -23,9 +23,13 @@ export class HttpService {
 
   // #region GET
 
-  public GetCarteira(docNume: string): Observable<CarteiraBariatricaModel> {
-      return this.http.get<CarteiraBariatricaModel>(`${environment.apiServicos}/CarteiraBariatrica/${docNume}`);
+  public GetCarteiraByCPF(docNume: string): Observable<CarteiraBariatricaModel> {
+    return this.http.get<CarteiraBariatricaModel>(`${environment.apiServicos}/CarteiraBariatrica/GetCarteiraByCPF/${docNume}`);
   }
+
+  // public GetCarteiraByConsultorio(docNume: string): Observable<CarteiraBariatricaModel> {
+  //     return this.http.get<CarteiraBariatricaModel>(`${environment.apiServicos}/GetCarteiraByCPF/${docNume}`);
+  // }
 
   public GetTipoPessoa(): Observable<TipoPessoaModel[]> {
     return this.http.get<TipoPessoaModel[]>(`${environment.apiServicos}/TipoPessoa`);
@@ -61,6 +65,22 @@ export class HttpService {
 
   public AlteraStatusPessoa(pesCodi: number, statusAtual: boolean): Observable<string> {
     return this.http.get<string>(`${environment.apiServicos}/Pessoa/AlteraStatusPessoa/${pesCodi}/${statusAtual}`);
+  }
+
+  public GetTipoCirurgia(tpcCodi: number): Observable<any> {
+    if (tpcCodi > 0) {
+      return this.http.get<any>(`${environment.apiServicos}/TipoCirurgia/${tpcCodi}`);
+    } else {
+      return this.http.get<any>(`${environment.apiServicos}/TipoCirurgia`);
+    }
+  }
+
+  public GetHospital(hosCodi: number): Observable<any> {
+    if (hosCodi > 0) {
+      return this.http.get<any>(`${environment.apiServicos}/Hospital/${hosCodi}`);
+    } else {
+      return this.http.get<any>(`${environment.apiServicos}/Hospital`);
+    }
   }
 
   // #endregion
