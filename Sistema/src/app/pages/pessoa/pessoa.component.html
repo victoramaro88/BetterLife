@@ -4,289 +4,287 @@
 <p-toast />
 
 <div class="container">
-  <div class="container">
-    <p-card header="Pessoas - Consultório" class="card">
-      <!-- GRID DAS PESSOAS -->
-      <p-table
-      *ngIf="!boolEditarSalvar"
-      [value]="listaPessoaConsultorio"
-      [tableStyle]="{ 'min-width': '50rem' }"
-      styleClass="p-datatable-sm p-datatable-striped"
-      [paginator]="true"
-      [rows]="5"
-      [tableStyle]="{ 'min-width': '50rem' }"
-      [rowsPerPageOptions]="[5, 10, 20]"
-      >
-        <ng-template pTemplate="header">
-            <tr>
-              <th style="text-align: center;">Código</th>
-              <th style="text-align: center;">CPF</th>
-              <th style="text-align: center;">Nome</th>
-              <th style="text-align: center;">Tipo de Pessoa</th>
-              <th style="text-align: center;">Status</th>
-              <th style="text-align: center;">Opções</th>
-            </tr>
-        </ng-template>
-        <ng-template pTemplate="body" let-item>
-            <tr>
-                <td style="text-align: center;">{{ item.pesCodi }}</td>
-                <td style="text-align: center;">{{ item.pesCPF | cpfMask }}</td>
-                <td>{{ item.pesNome }}</td>
-                <td style="text-align: center;">{{ item.tipDesc }}</td>
-                <td style="text-align: center;">{{ item.pesStat ? 'Ativo' : 'Inativo' }}</td>
-                <td style="text-align: center;">
-                  <p-button (onClick)="ExibirLink(item.pesCPF);"
-                  *ngIf="item.tipDesc === 'Paciente'"
-                  pTooltip="Link da Carteira"
-                  tooltipPosition="left"
-                  icon="pi pi-id-card"
-                  [rounded]="true"
-                  [text]="true"
-                  severity="info" />
+  <p-card header="Pessoas - Consultório" class="card">
+    <!-- GRID DAS PESSOAS -->
+    <p-table
+    *ngIf="!boolEditarSalvar"
+    [value]="listaPessoaConsultorio"
+    [tableStyle]="{ 'min-width': '50rem' }"
+    styleClass="p-datatable-sm p-datatable-striped"
+    [paginator]="true"
+    [rows]="5"
+    [tableStyle]="{ 'min-width': '50rem' }"
+    [rowsPerPageOptions]="[5, 10, 20]"
+    >
+      <ng-template pTemplate="header">
+          <tr>
+            <th style="text-align: center;">Código</th>
+            <th style="text-align: center;">CPF</th>
+            <th style="text-align: center;">Nome</th>
+            <th style="text-align: center;">Tipo de Pessoa</th>
+            <th style="text-align: center;">Status</th>
+            <th style="text-align: center;">Opções</th>
+          </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-item>
+          <tr>
+              <td style="text-align: center;">{{ item.pesCodi }}</td>
+              <td style="text-align: center;">{{ item.pesCPF | cpfMask }}</td>
+              <td>{{ item.pesNome }}</td>
+              <td style="text-align: center;">{{ item.tipDesc }}</td>
+              <td style="text-align: center;">{{ item.pesStat ? 'Ativo' : 'Inativo' }}</td>
+              <td style="text-align: center;">
+                <p-button (onClick)="ExibirLink(item.pesCPF);"
+                *ngIf="item.tipDesc === 'Paciente'"
+                pTooltip="Link da Carteira"
+                tooltipPosition="left"
+                icon="pi pi-id-card"
+                [rounded]="true"
+                [text]="true"
+                severity="info" />
 
-                  <p-button (onClick)="GetPessoaById(item.pesCodi);"
-                  pTooltip="Editar"
-                  tooltipPosition="left"
-                  icon="pi pi-pen-to-square"
-                  [rounded]="true"
-                  [text]="true"
-                  severity="secondary" />
+                <p-button (onClick)="GetPessoaById(item.pesCodi);"
+                pTooltip="Editar"
+                tooltipPosition="left"
+                icon="pi pi-pen-to-square"
+                [rounded]="true"
+                [text]="true"
+                severity="secondary" />
 
-                  <p-button (onClick)="AlteraStatusPessoa(item.pesCodi, item.pesStat);" *ngIf="!item.pesStat" pTooltip="Ativar Pessoa" tooltipPosition="left"  icon="pi pi-lock-open" [rounded]="true" [text]="true" severity="danger" size="small" />
+                <p-button (onClick)="AlteraStatusPessoa(item.pesCodi, item.pesStat);" *ngIf="!item.pesStat" pTooltip="Ativar Pessoa" tooltipPosition="left"  icon="pi pi-lock-open" [rounded]="true" [text]="true" severity="danger" size="small" />
 
-                  <p-button (onClick)="AlteraStatusPessoa(item.pesCodi, item.pesStat);" *ngIf="item.pesStat" pTooltip="Inativar Pessoa" tooltipPosition="left" icon="pi pi-lock" [rounded]="true" [text]="true" severity="success" size="small" />
-                </td>
-            </tr>
-        </ng-template>
-      </p-table>
+                <p-button (onClick)="AlteraStatusPessoa(item.pesCodi, item.pesStat);" *ngIf="item.pesStat" pTooltip="Inativar Pessoa" tooltipPosition="left" icon="pi pi-lock" [rounded]="true" [text]="true" severity="success" size="small" />
+              </td>
+          </tr>
+      </ng-template>
+    </p-table>
 
-      <!-- FORM DE CADASTRO -->
-      <div *ngIf="boolEditarSalvar" class="formgrid grid">
-        <!-- NOME -->
-        <div class="field col-12 md:col-8">
-            <label for="nome">Nome</label><br>
-            <input type="text" pInputText [(ngModel)]="objPessoa.pesNome" class="w-full"/>
-        </div>
-        <!-- NASCIMENTO -->
-        <div class="field col-12 md:col-4">
-          <label for="nascimento">Nascimento</label><br>
-          <p-calendar
-          id="nascimento"
-          [(ngModel)]="objPessoa.pesNasc"
-          name="pesNasc"
-          dateFormat="dd/mm/yy"
-          [showIcon]="true"
-          [style]="{width: '100%'}"
-          >
-          </p-calendar>
-        </div>
-        <!-- TIPO PESSOA -->
-        <div class="field col-12 md:col-4">
-          <label for="tipoPessoa">Tipo Pessoa</label><br>
-          <p-dropdown
-          placeholder="Selecione"
-          id="tipoPessoa"
-          [options]="lstTipoPessoa"
-          optionLabel="TipDesc"
-          [(ngModel)]="objTipoPessoa"
-          [style]="{width: '100%'}"
-          [showClear]="true"
-          ></p-dropdown>
-        </div>
-        <!-- GÊNERO -->
-        <div class="field col-12 md:col-4">
-          <label for="genero">Gênero</label><br>
-          <p-dropdown
-          placeholder="Selecione"
-          id="genero"
-          [options]="lstGenero"
-          optionLabel="GenDesc"
-          [(ngModel)]="objGenero"
-          [style]="{width: '100%'}"
-          [showClear]="true"
-          ></p-dropdown>
-        </div>
-        <!-- DOCUMENTOS -->
-        <div class="field col-12 md:col-6">
-          <p>Documentos</p>
-          <div class="flex align-items-center gap-2 mb-2">
-            <div class="grid">
-              <div class="flex flex-column flex-grow-1 col-12 md:col-6">
-                <label for="tipoDoc">Tipo de Documento</label>
-                <p-dropdown
-                  placeholder="Selecione"
-                  id="tipoDoc"
-                  [options]="lstTipoDocumento"
-                  optionLabel="TidDesc"
-                  [(ngModel)]="objTipoDocumento"
-                  [style]="{ width: '100%' }"
-                  [showClear]="true"
-                ></p-dropdown>
-              </div>
-              <div class="flex flex-column flex-grow-1 col-12 md:col-5">
-                <label for="numDoc">Número do Documento</label>
-                <input
-                  id="numDoc"
-                  [(ngModel)]="objDocumento.DocNume"
-                  type="text"
-                  pInputText
-                  style="width: 100%;"
-                />
-              </div>
-              <div class=" text-center flex flex-column flex-grow-1 col-12 md:col-1 mt-3">
-                <p-button
-                  icon="pi pi-plus"
-                  [rounded]="true"
-                  [text]="true"
-                  [raised]="true"
-                  severity="success"
-                  (onClick)="AddDoc();"
-                ></p-button>
-              </div>
+    <!-- FORM DE CADASTRO -->
+    <div *ngIf="boolEditarSalvar" class="formgrid grid">
+      <!-- NOME -->
+      <div class="field col-12 md:col-8">
+          <label for="nome">Nome</label><br>
+          <input type="text" pInputText [(ngModel)]="objPessoa.pesNome" class="w-full"/>
+      </div>
+      <!-- NASCIMENTO -->
+      <div class="field col-12 md:col-4">
+        <label for="nascimento">Nascimento</label><br>
+        <p-calendar
+        id="nascimento"
+        [(ngModel)]="objPessoa.pesNasc"
+        name="pesNasc"
+        dateFormat="dd/mm/yy"
+        [showIcon]="true"
+        [style]="{width: '100%'}"
+        >
+        </p-calendar>
+      </div>
+      <!-- TIPO PESSOA -->
+      <div class="field col-12 md:col-4">
+        <label for="tipoPessoa">Tipo Pessoa</label><br>
+        <p-dropdown
+        placeholder="Selecione"
+        id="tipoPessoa"
+        [options]="lstTipoPessoa"
+        optionLabel="TipDesc"
+        [(ngModel)]="objTipoPessoa"
+        [style]="{width: '100%'}"
+        [showClear]="true"
+        ></p-dropdown>
+      </div>
+      <!-- GÊNERO -->
+      <div class="field col-12 md:col-4">
+        <label for="genero">Gênero</label><br>
+        <p-dropdown
+        placeholder="Selecione"
+        id="genero"
+        [options]="lstGenero"
+        optionLabel="GenDesc"
+        [(ngModel)]="objGenero"
+        [style]="{width: '100%'}"
+        [showClear]="true"
+        ></p-dropdown>
+      </div>
+      <!-- DOCUMENTOS -->
+      <div class="field col-12 md:col-6">
+        <p>Documentos</p>
+        <div class="flex align-items-center gap-2 mb-2">
+          <div class="grid">
+            <div class="flex flex-column flex-grow-1 col-12 md:col-6">
+              <label for="tipoDoc">Tipo de Documento</label>
+              <p-dropdown
+                placeholder="Selecione"
+                id="tipoDoc"
+                [options]="lstTipoDocumento"
+                optionLabel="TidDesc"
+                [(ngModel)]="objTipoDocumento"
+                [style]="{ width: '100%' }"
+                [showClear]="true"
+              ></p-dropdown>
             </div>
-          </div>
-          <p-table
-          styleClass="p-datatable-sm"
-          [value]="lstDocumento">
-            <ng-template pTemplate="header">
-                <tr>
-                    <th>Tipo</th>
-                    <th>Número</th>
-                    <th>Remover</th>
-                </tr>
-            </ng-template>
-            <ng-template pTemplate="body" let-item>
-                <tr>
-                    <td>{{ RetornaNomeDoc(item.TidCodi) }}</td>
-                    <!-- <td>{{ item.DocNume }}</td> -->
-                    <td>{{ item.TidCodi != 1 ? item.DocNume : item.DocNume | cpfMask}}</td>
-                    <td><p-button (onClick)="DelDoc(item.DocNume);" icon="pi pi-times" [rounded]="true" [text]="true" severity="danger" /></td>
-                </tr>
-            </ng-template>
-          </p-table>
-
-        </div>
-        <!-- CONTATOS -->
-        <div class="field col-12 md:col-6">
-          <p>Contatos</p>
-          <div class="flex align-items-center gap-2 mb-2">
-            <div class="grid">
-              <div class="flex flex-column flex-grow-1 col-12 md:col-6">
-                <label for="TicCodi">Tipo de Contato</label>
-                <p-dropdown
-                  placeholder="Selecione"
-                  id="TicCodi"
-                  [options]="lstTipoContato"
-                  optionLabel="TicDesc"
-                  [(ngModel)]="objTipoContato"
-                  [style]="{ width: '100%' }"
-                  [showClear]="true"
-                ></p-dropdown>
-              </div>
-              <div class="flex flex-column flex-grow-1 col-12 md:col-5">
-                <label for="TicDesc">Descrição do Contato</label>
-                <input
-                  id="TicDesc"
-                  [(ngModel)]="objContato.CttDesc"
-                  type="text"
-                  pInputText
-                  style="width: 100%;"
-                />
-              </div>
-              <div class=" text-center flex flex-column flex-grow-1 col-12 md:col-1 mt-3">
-                <p-button
-                  icon="pi pi-plus"
-                  [rounded]="true"
-                  [text]="true"
-                  [raised]="true"
-                  severity="success"
-                  (onClick)="AddCtt();"
-                ></p-button>
-              </div>
-            </div>
-          </div>
-          <p-table
-          styleClass="p-datatable-sm"
-          [value]="lstContato">
-            <ng-template pTemplate="header">
-                <tr>
-                    <th>Tipo</th>
-                    <th>Descrição</th>
-                    <th>Remover</th>
-                </tr>
-            </ng-template>
-            <ng-template pTemplate="body" let-item>
-                <tr>
-                    <td>{{ RetornaNomeCtt(item.TicCodi) }}</td>
-                    <!-- <td>{{ item.CttDesc }}</td> -->
-                    <td>{{ item.TicCodi === 2 ? item.CttDesc : item.CttDesc | telefone }}</td>
-                    <td><p-button (onClick)="DelCtt(item.CttDesc);" icon="pi pi-times" [rounded]="true" [text]="true" severity="danger" /></td>
-                </tr>
-            </ng-template>
-          </p-table>
-
-        </div>
-        <!-- FOTO -->
-        <div class="field col-6">
-          <label for="fileUpload">Foto</label><br />
-          <div class=" align-items-center gap-2">
-            <button
-              pButton
-              type="button"
-              label="{{ buttonLabel }}"
-              icon="pi pi-upload"
-              (click)="fileInput.click()"
-              size="small"
-            ></button>
-            <br><br>
-            <input
-              type="file"
-              accept="image/*"
-              (change)="onFileSelect($event)"
-              id="fileUpload"
-              style="display: none;"
-              #fileInput
-            />
-            <div *ngIf="imageName" class="flex align-items-center">
-              <img
-                [src]="imagePreview"
-                [alt]="imageName"
-                style="width: 80px; height: auto; margin-left: 10px;"
+            <div class="flex flex-column flex-grow-1 col-12 md:col-5">
+              <label for="numDoc">Número do Documento</label>
+              <input
+                id="numDoc"
+                [(ngModel)]="objDocumento.DocNume"
+                type="text"
+                pInputText
+                style="width: 100%;"
               />
-              <span style="margin-left: 10px;">{{ imageName }}</span>
+            </div>
+            <div class=" text-center flex flex-column flex-grow-1 col-12 md:col-1 mt-3">
+              <p-button
+                icon="pi pi-plus"
+                [rounded]="true"
+                [text]="true"
+                [raised]="true"
+                severity="success"
+                (onClick)="AddDoc();"
+              ></p-button>
             </div>
           </div>
         </div>
-        <!-- USUÁRIO -->
-        <div class="field col-6">
-          <label for="cadLogin">Deseja {{objPessoa.pesCodi > 0 ? 'editar' : 'cadastrar'}}  o login?</label><br>
-          <p-inputSwitch id="cadLogin" [(ngModel)]="boolCadastroLogin" /><br>
-          <div class="mt-2" *ngIf="boolCadastroLogin">
-            <div class="field col-12 md:col-12">
-              <label for="usuLogin">Usuário</label><br>
-              <input id="usuLogin" type="text" pInputText [(ngModel)]="objUsuarioLogin.usuario" class="w-full"/>
-            </div>
-            <div class="field col-12 md:col-12">
-              <label for="usuSenh">Senha</label><br>
-              <div class="p-fluid">
-                <p-password id="usuSenh" [(ngModel)]="objUsuarioLogin.senha" [toggleMask]="true" class="full-width" [feedback]="false"/>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+        <p-table
+        styleClass="p-datatable-sm"
+        [value]="lstDocumento">
+          <ng-template pTemplate="header">
+              <tr>
+                  <th>Tipo</th>
+                  <th>Número</th>
+                  <th>Remover</th>
+              </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-item>
+              <tr>
+                  <td>{{ RetornaNomeDoc(item.TidCodi) }}</td>
+                  <!-- <td>{{ item.DocNume }}</td> -->
+                  <td>{{ item.TidCodi != 1 ? item.DocNume : item.DocNume | cpfMask}}</td>
+                  <td><p-button (onClick)="DelDoc(item.DocNume);" icon="pi pi-times" [rounded]="true" [text]="true" severity="danger" /></td>
+              </tr>
+          </ng-template>
+        </p-table>
 
-      <!-- BOTÕES -->
-      <div class="text-right">
-        <div *ngIf="!boolEditarSalvar" class="mt-3">
-          <p-button (onClick)="NovoRegistro();" label="Novo Registro" [raised]="true" size="small"/> &nbsp;
-          <p-button (onClick)="CancelaForm();" label="Cancelar" [raised]="true" severity="danger" size="small"/>
-        </div> &nbsp;
-        <p-button *ngIf="boolEditarSalvar" (onClick)="Salvar();" label="Salvar" [raised]="true" severity="success" size="small"/> &nbsp;
-        <p-button *ngIf="boolEditarSalvar" (onClick)="Cancelar();" label="Cancelar" [raised]="true" severity="danger" size="small"/>
       </div>
-    </p-card>
-  </div>
+      <!-- CONTATOS -->
+      <div class="field col-12 md:col-6">
+        <p>Contatos</p>
+        <div class="flex align-items-center gap-2 mb-2">
+          <div class="grid">
+            <div class="flex flex-column flex-grow-1 col-12 md:col-6">
+              <label for="TicCodi">Tipo de Contato</label>
+              <p-dropdown
+                placeholder="Selecione"
+                id="TicCodi"
+                [options]="lstTipoContato"
+                optionLabel="TicDesc"
+                [(ngModel)]="objTipoContato"
+                [style]="{ width: '100%' }"
+                [showClear]="true"
+              ></p-dropdown>
+            </div>
+            <div class="flex flex-column flex-grow-1 col-12 md:col-5">
+              <label for="TicDesc">Descrição do Contato</label>
+              <input
+                id="TicDesc"
+                [(ngModel)]="objContato.CttDesc"
+                type="text"
+                pInputText
+                style="width: 100%;"
+              />
+            </div>
+            <div class=" text-center flex flex-column flex-grow-1 col-12 md:col-1 mt-3">
+              <p-button
+                icon="pi pi-plus"
+                [rounded]="true"
+                [text]="true"
+                [raised]="true"
+                severity="success"
+                (onClick)="AddCtt();"
+              ></p-button>
+            </div>
+          </div>
+        </div>
+        <p-table
+        styleClass="p-datatable-sm"
+        [value]="lstContato">
+          <ng-template pTemplate="header">
+              <tr>
+                  <th>Tipo</th>
+                  <th>Descrição</th>
+                  <th>Remover</th>
+              </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-item>
+              <tr>
+                  <td>{{ RetornaNomeCtt(item.TicCodi) }}</td>
+                  <!-- <td>{{ item.CttDesc }}</td> -->
+                  <td>{{ item.TicCodi === 2 ? item.CttDesc : item.CttDesc | telefone }}</td>
+                  <td><p-button (onClick)="DelCtt(item.CttDesc);" icon="pi pi-times" [rounded]="true" [text]="true" severity="danger" /></td>
+              </tr>
+          </ng-template>
+        </p-table>
+
+      </div>
+      <!-- FOTO -->
+      <div class="field col-6">
+        <label for="fileUpload">Foto</label><br />
+        <div class=" align-items-center gap-2">
+          <button
+            pButton
+            type="button"
+            label="{{ buttonLabel }}"
+            icon="pi pi-upload"
+            (click)="fileInput.click()"
+            size="small"
+          ></button>
+          <br><br>
+          <input
+            type="file"
+            accept="image/*"
+            (change)="onFileSelect($event)"
+            id="fileUpload"
+            style="display: none;"
+            #fileInput
+          />
+          <div *ngIf="imageName" class="flex align-items-center">
+            <img
+              [src]="imagePreview"
+              [alt]="imageName"
+              style="width: 80px; height: auto; margin-left: 10px;"
+            />
+            <span style="margin-left: 10px;">{{ imageName }}</span>
+          </div>
+        </div>
+      </div>
+      <!-- USUÁRIO -->
+      <div class="field col-6">
+        <label for="cadLogin">Deseja {{objPessoa.pesCodi > 0 ? 'editar' : 'cadastrar'}}  o login?</label><br>
+        <p-inputSwitch id="cadLogin" [(ngModel)]="boolCadastroLogin" /><br>
+        <div class="mt-2" *ngIf="boolCadastroLogin">
+          <div class="field col-12 md:col-12">
+            <label for="usuLogin">Usuário</label><br>
+            <input id="usuLogin" type="text" pInputText [(ngModel)]="objUsuarioLogin.usuario" class="w-full"/>
+          </div>
+          <div class="field col-12 md:col-12">
+            <label for="usuSenh">Senha</label><br>
+            <div class="p-fluid">
+              <p-password id="usuSenh" [(ngModel)]="objUsuarioLogin.senha" [toggleMask]="true" class="full-width" [feedback]="false"/>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- BOTÕES -->
+    <div class="text-right">
+      <div *ngIf="!boolEditarSalvar" class="mt-3">
+        <p-button (onClick)="NovoRegistro();" label="Novo Registro" [raised]="true" size="small"/> &nbsp;
+        <p-button (onClick)="CancelaForm();" label="Cancelar" [raised]="true" severity="danger" size="small"/>
+      </div> &nbsp;
+      <p-button *ngIf="boolEditarSalvar" (onClick)="Salvar();" label="Salvar" [raised]="true" severity="success" size="small"/> &nbsp;
+      <p-button *ngIf="boolEditarSalvar" (onClick)="Cancelar();" label="Cancelar" [raised]="true" severity="danger" size="small"/>
+    </div>
+  </p-card>
 </div>
 
 

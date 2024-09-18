@@ -5,7 +5,7 @@ using System;
 
 namespace API_BetterLife.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/[controller]/[action]")]
     [ApiController]
     public class PessoaConsultorioController : ControllerBase
     {
@@ -54,6 +54,40 @@ namespace API_BetterLife.Controllers
             {
                 await transaction.RollbackAsync();
                 return BadRequest(ex.Message + " \n " + ex.InnerException?.Message);
+            }
+        }
+
+        [HttpGet("{conCodi}")]
+        public Task<ActionResult<IEnumerable<MedicoConsultorioModel>>> GetMedicoByConsultorio(int conCodi)
+        {
+            try
+            {
+                using (var context = new AppDbContext())
+                {
+                    var query = from pessoa in context.Pessoas
+                                join pessoaConsultorio in context.PessoaConsultorios
+                                on pessoa.PesCodi equals pessoaConsultorio.PesCodi
+                                where pessoaConsultorio.ConCodi == conCodi && pessoa.TipCodi == 1
+                                select new
+                                {
+                                    pesCodi = pessoa.PesCodi,
+                                    pecCodi = pessoaConsultorio.PecCodi,
+                                    pesNome = pessoa.PesNome
+                                };
+                    var list = query.ToList();
+
+                    if (list != null)
+                    {
+                        return Task.FromResult<ActionResult<IEnumerable<MedicoConsultorioModel>>>(Ok(list));
+                    }
+                }
+
+                return Task.FromResult<ActionResult<IEnumerable<MedicoConsultorioModel>>>(NotFound());
+            }
+            catch (Exception ex)
+            {
+                return Task.FromResult<ActionResult<IEnumerable<MedicoConsultorioModel>>>(
+                    BadRequest(ex.Message + " \n " + ex.InnerException?.Message));
             }
         }
     }

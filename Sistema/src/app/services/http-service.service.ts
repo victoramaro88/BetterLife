@@ -12,6 +12,8 @@ import { ConsultorioModel } from "../models/Consultorio.Model";
 import { LoginModel } from "../models/Login.Model";
 import { UsuarioLogadoModel } from "../models/UsuarioLogado.Model";
 import { PessoaConsultorioRetornoModel } from "../models/PessoaConsultorioRetorno.Model";
+import { CarteiraByConsultorioModel } from "../models/CarteiraByConsultorio.Model";
+import { MedicoConsultorioModel } from "../models/MedicoConsultorio.Model";
 
 @Injectable({
     providedIn: 'root'
@@ -27,9 +29,9 @@ export class HttpService {
     return this.http.get<CarteiraBariatricaModel>(`${environment.apiServicos}/CarteiraBariatrica/GetCarteiraByCPF/${docNume}`);
   }
 
-  // public GetCarteiraByConsultorio(docNume: string): Observable<CarteiraBariatricaModel> {
-  //     return this.http.get<CarteiraBariatricaModel>(`${environment.apiServicos}/GetCarteiraByCPF/${docNume}`);
-  // }
+  public GetCarteiraByConsultorio(conCodi: number): Observable<CarteiraByConsultorioModel[]> {
+      return this.http.get<CarteiraByConsultorioModel[]>(`${environment.apiServicos}/CarteiraBariatrica/GetCarteiraByConsultorio/${conCodi}`);
+  }
 
   public GetTipoPessoa(): Observable<TipoPessoaModel[]> {
     return this.http.get<TipoPessoaModel[]>(`${environment.apiServicos}/TipoPessoa`);
@@ -81,6 +83,10 @@ export class HttpService {
     } else {
       return this.http.get<any>(`${environment.apiServicos}/Hospital`);
     }
+  }
+
+  public GetMedicoByConsultorio(conCodi: number): Observable<MedicoConsultorioModel[]> {
+    return this.http.get<MedicoConsultorioModel[]>(`${environment.apiServicos}/PessoaConsultorio/GetMedicoByConsultorio/${conCodi}`);
   }
 
   // #endregion

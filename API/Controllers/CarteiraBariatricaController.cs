@@ -79,58 +79,57 @@ namespace API_BetterLife.Controllers
         }
 
         [HttpGet("{conCodi}")]
-        public Task<ActionResult<IEnumerable<CarteiraBariatrica>>> GetCarteiraByConsultorio(int conCodi)
+        public Task<ActionResult<IEnumerable<CarteiraByConsultorioModel>>> GetCarteiraByConsultorio(int conCodi)
         {
             try
             {
                 using (var context = new AppDbContext())
                 {
                     var query = from carteira in context.CarteiraBariatricas
-                                join tipoCirurgia in context.TipoCirurgia
-                                on carteira.TpcCodi equals tipoCirurgia.TpcCodi
-                                join hosp in context.Hospitals
-                                on carteira.HosCodi equals hosp.HosCodi
-                                join pessoa in context.Pessoas
-                                on carteira.PesCodi equals pessoa.PesCodi
-                                join pessoaCons in context.PessoaConsultorios
-                                on carteira.PecCodi equals pessoaCons.PecCodi
-                                join consultorio in context.Consultorios
-                                on pessoaCons.ConCodi equals consultorio.ConCodi
-                                join medico in context.Pessoas
-                                on pessoaCons.PesCodi equals medico.PesCodi
-                                join crm in context.Documentos
-                                on medico.PesCodi equals crm.PesCodi
-                                join documento in context.Documentos
-                                on pessoa.PesCodi equals documento.PesCodi
-                                where consultorio.ConCodi == conCodi
-                                select new
-                                {
-                                    carCodi = carteira.CarCodi,
-                                    pesNome = pessoa.PesNome,
-                                    docNume = documento.DocNume,
-                                    medicoNome = medico.PesNome,
-                                    //crmMedico = crm.DocNume,
-                                    tpcDesc = tipoCirurgia.TpcDesc,
-                                    hosDesc = hosp.HosDesc,
-                                    //conDesc = consultorio.ConDesc,
-                                    carDtCi = carteira.CarDtCi,
-                                    //pesFoto = pessoa.PesFoto,
-                                    //conFoto = consultorio.ConFoto
-                                };
+                                             join tipoCirurgia in context.TipoCirurgia
+                                             on carteira.TpcCodi equals tipoCirurgia.TpcCodi
+                                             join hosp in context.Hospitals
+                                             on carteira.HosCodi equals hosp.HosCodi
+                                             join pessoa in context.Pessoas
+                                             on carteira.PesCodi equals pessoa.PesCodi
+                                             join pessoaCons in context.PessoaConsultorios
+                                             on carteira.PecCodi equals pessoaCons.PecCodi
+                                             join consultorio in context.Consultorios
+                                             on pessoaCons.ConCodi equals consultorio.ConCodi
+                                             join medico in context.Pessoas
+                                             on pessoaCons.PesCodi equals medico.PesCodi
+                                             join documento in context.Documentos
+                                             on pessoa.PesCodi equals documento.PesCodi
+                                             where consultorio.ConCodi == conCodi
+                                             select new
+                                             {
+                                                 carCodi = carteira.CarCodi,
+                                                 pesCodi = pessoa.PesCodi,
+                                                 pesNome = pessoa.PesNome,
+                                                 docNume = documento.DocNume,
+                                                 pecCodi = pessoaCons.PecCodi,
+                                                 medicoNome = medico.PesNome,
+                                                 tpcCodi = tipoCirurgia.TpcCodi,
+                                                 tpcDesc = tipoCirurgia.TpcDesc,
+                                                 hosCodi = hosp.HosCodi,
+                                                 hosDesc = hosp.HosDesc,
+                                                 carDtCi = carteira.CarDtCi,
+                                                 carStat = carteira.CarStat
+                                             };
 
-                    var result = query.FirstOrDefault();
+                    var list = query.ToList();
 
-                    if (result != null)
+                    if (list != null)
                     {
-                        return Task.FromResult<ActionResult<IEnumerable<CarteiraBariatrica>>>(Ok(result));
+                        return Task.FromResult<ActionResult<IEnumerable<CarteiraByConsultorioModel>>>(Ok(list));
                     }
                 }
 
-                return Task.FromResult<ActionResult<IEnumerable<CarteiraBariatrica>>>(NotFound());
+                return Task.FromResult<ActionResult<IEnumerable<CarteiraByConsultorioModel>>>(NotFound());
             }
             catch (Exception ex)
             {
-                return Task.FromResult<ActionResult<IEnumerable<CarteiraBariatrica>>>(
+                return Task.FromResult<ActionResult<IEnumerable<CarteiraByConsultorioModel>>>(
                     BadRequest(ex.Message + " \n " + ex.InnerException?.Message));
             }
         }

@@ -9,6 +9,11 @@ import { FormsModule } from '@angular/forms';
 import { HospitalModel } from '../../models/Hospital.Model';
 import { MessageService } from 'primeng/api';
 import { TipoCirurgia } from '../../models/TipoCirurgia.Model';
+import { CarteiraByConsultorioModel } from '../../models/CarteiraByConsultorio.Model';
+import { UsuarioLogadoModel } from '../../models/UsuarioLogado.Model';
+import { PessoaConsultorioRetornoModel } from '../../models/PessoaConsultorioRetorno.Model';
+import { MedicoConsultorioModel } from '../../models/MedicoConsultorio.Model';
+import { CarteiraBariatricaModel } from '../../models/carteirabariatrica.model';
 
 @Component({
   selector: 'app-cadastro-carteira',
@@ -21,9 +26,19 @@ import { TipoCirurgia } from '../../models/TipoCirurgia.Model';
 export class CadastroCarteiraComponent implements OnInit {
 
   blockLoading: boolean = true;
+  novoObjUsr: UsuarioLogadoModel = new UsuarioLogadoModel();
+  boolEditarSalvar: boolean = false;
 
-  lstHospitais: HospitalModel = new HospitalModel();
-  lstTipoCirurgia: TipoCirurgia = new TipoCirurgia();
+  lstHospitais: HospitalModel[] = [];
+  objHospitais: HospitalModel = new HospitalModel();
+  lstTipoCirurgia: TipoCirurgia[] = [];
+  objTipoCirurgia: TipoCirurgia = new TipoCirurgia();
+  lstCarteira: CarteiraByConsultorioModel[] = [];
+  lstPessoaConsultorio: PessoaConsultorioRetornoModel[] = [];
+  objPessoaConsultorio: PessoaConsultorioRetornoModel = new PessoaConsultorioRetornoModel();
+  lstMedicoConsultorio: MedicoConsultorioModel[] = [];
+  objMedicoConsultorio: MedicoConsultorioModel = new MedicoConsultorioModel();
+  objCarteira: CarteiraBariatricaModel = new CarteiraBariatricaModel();
 
   constructor(
     private http: HttpService,
@@ -32,18 +47,21 @@ export class CadastroCarteiraComponent implements OnInit {
     private router: Router,
     private cryptoService: CryptoService,
     private base64Service: Base64Service
-  ) { }
-
-  ngOnInit(): void {
-    this.GetHospitals(0);
+  ) {
+    this.novoObjUsr = JSON.parse(this.cryptoService.lerDoSessionStorage("usr"));
+    // console.warn(this.novoObjUsr);
   }
 
+  ngOnInit(): void {
+    this.GetCarteiraByConsultorio(this.novoObjUsr.conCodi);
+  }
+
+  // #region CONSULTAS INICIAIS
   GetHospitals(hosCodi: number) {
     try {
       this.http.GetHospital(hosCodi).subscribe({
         next: (response) => {
           this.lstHospitais = response;
-          console.warn("Hospitais:", this.lstHospitais);
           this.GetTipoCirurgia(0);
         },
         error: (error) => {
@@ -60,7 +78,6 @@ export class CadastroCarteiraComponent implements OnInit {
       this.http.GetTipoCirurgia(tpcCodi).subscribe({
         next: (response) => {
           this.lstTipoCirurgia = response;
-          console.warn("TipoCirurgias:", this.lstTipoCirurgia);
           this.blockLoading = false;
         },
         error: (error) => {
@@ -70,5 +87,99 @@ export class CadastroCarteiraComponent implements OnInit {
     } catch (error) {
       console.error(error);
     }
+  }
+
+  GetCarteiraByConsultorio(conCodi: number) {
+    try {
+      this.http.GetCarteiraByConsultorio(conCodi).subscribe({
+        next: (response) => {
+          this.lstCarteira = response;
+          this.GetHospitals(0);
+        },
+        error: (error) => {
+          console.error('Erro ao carregar dados:', error);
+        }
+      });
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  // #endregion
+
+  GetPessoaByIdConsultorio(conCodi: number) {
+    this.blockLoading = true;
+    this.lstPessoaConsultorio = [];
+    try {
+      this.http.GetPessoaByIdConsultorio(conCodi).subscribe({
+        next: (response) => {
+          //-> Filtrando apenas os pacientes nessa consulta.
+          this.lstPessoaConsultorio = response.filter(p => p.tipDesc === 'Paciente');
+          console.warn(this.lstPessoaConsultorio);
+        },
+        error: (error) => {
+          console.error('Erro ao carregar dados:', error);
+        }
+      });
+
+      this.GetMedicoByConsultorio(conCodi);
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  GetMedicoByConsultorio(conCodi: number) {
+    this.blockLoading = true;
+    this.lstPessoaConsultorio = [];
+    try {
+      this.http.GetMedicoByConsultorio(conCodi).subscribe({
+        next: (response) => {
+          this.lstMedicoConsultorio = response;
+          this.blockLoading = false;
+        },
+        error: (error) => {
+          console.error('Erro ao carregar dados:', error);
+        }
+      });
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  GetCarteiraByCPF(docNume: string) {
+    console.warn(docNume);
+    this.blockLoading = true;
+    try {
+      this.http.GetCarteiraByCPF(docNume).subscribe({
+        next: (response) => {
+          this.objCarteira = response;
+          console.warn(this.objCarteira);
+          this.blockLoading = false;
+        },
+        error: (error) => {
+          // console.error('Erro ao carregar dados:', error);
+          console.warn("Carteira não encontrada!");
+          this.blockLoading = false;
+        }
+      });
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  NovoRegistro() {
+    this.boolEditarSalvar = true;
+    this.GetPessoaByIdConsultorio(this.novoObjUsr.conCodi);
+  }
+
+  CancelaForm() {
+    this.router.navigate(['/home']);
+  }
+
+  Salvar() {
+  }
+
+  Cancelar() {
+    this.boolEditarSalvar = false;
   }
 }

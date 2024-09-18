@@ -2,3 +2,142 @@
   <i class="pi pi-spin pi-spinner-dotted" style="font-size: 3rem"></i>
 </p-blockUI>
 <p-toast />
+
+<div class="container">
+  <p-card header="Carteiras" class="card">
+    <!-- GRID DAS CARTEIRAS -->
+    <p-table
+    *ngIf="!boolEditarSalvar"
+    [value]="lstCarteira"
+    [tableStyle]="{ 'min-width': '50rem' }"
+    styleClass="p-datatable-sm p-datatable-striped"
+    [paginator]="true"
+    [rows]="5"
+    [tableStyle]="{ 'min-width': '50rem' }"
+    [rowsPerPageOptions]="[5, 10, 20]"
+    >
+      <ng-template pTemplate="header">
+          <tr>
+            <!-- <th style="text-align: center;"><small>Código</small></th> -->
+            <th style="text-align: center;"><small>CPF</small></th>
+            <th style="text-align: center;"><small>Nome</small></th>
+            <th style="text-align: center;"><small>Médico</small></th>
+            <th style="text-align: center;"><small>Tipo Cirurgia</small></th>
+            <th style="text-align: center;"><small>Hospital</small></th>
+            <th style="text-align: center;"><small>Data Cirurgia</small></th>
+            <th style="text-align: center;"><small>Status</small></th>
+            <th style="text-align: center;"><small>Opções</small></th>
+          </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-item>
+          <tr>
+              <!-- <td style="text-align: center;"><small>{{ item.carCodi }}</small></td> -->
+              <td style="text-align: center;"><small>{{ item.docNume | cpfMask }}</small></td>
+              <td><small>{{ item.pesNome }}</small></td>
+              <td><small>{{ item.medicoNome }}</small></td>
+              <td><small>{{ item.tpcDesc }}</small></td>
+              <td><small>{{ item.hosDesc }}</small></td>
+              <td style="text-align: center;"><small>{{ item.carDtCi | date:'dd/MM/yyyy' }}</small></td>
+              <td style="text-align: center;"><small>{{ item.carStat ? 'Ativo' : 'Inativo' }}</small></td>
+              <td style="text-align: center;">
+                <!-- <p-button (onClick)="ExibirLink(item.pesCPF);"
+                *ngIf="item.tipDesc === 'Paciente'"
+                pTooltip="Link da Carteira"
+                tooltipPosition="left"
+                icon="pi pi-id-card"
+                [rounded]="true"
+                [text]="true"
+                severity="info" /> -->
+
+                <!-- <p-button (onClick)="GetPessoaById(item.pesCodi);"
+                pTooltip="Editar"
+                tooltipPosition="left"
+                icon="pi pi-pen-to-square"
+                [rounded]="true"
+                [text]="true"
+                severity="secondary" /> -->
+
+                <!-- <p-button (onClick)="AlteraStatusPessoa(item.pesCodi, item.pesStat);" *ngIf="!item.pesStat" pTooltip="Ativar Pessoa" tooltipPosition="left"  icon="pi pi-lock-open" [rounded]="true" [text]="true" severity="danger" size="small" /> -->
+
+                <!-- <p-button (onClick)="AlteraStatusPessoa(item.pesCodi, item.pesStat);" *ngIf="item.pesStat" pTooltip="Inativar Pessoa" tooltipPosition="left" icon="pi pi-lock" [rounded]="true" [text]="true" severity="success" size="small" /> -->
+              </td>
+          </tr>
+      </ng-template>
+    </p-table>
+
+    <!-- FORM DE CADASTRO -->
+    <div *ngIf="boolEditarSalvar" class="formgrid grid">
+      <!-- PESSOA -->
+      <div class="field col-12 md:col-7">
+          <label for="nome">Pessoa</label><br>
+          <p-dropdown
+          placeholder="Selecione"
+          id="genero"
+          [options]="lstPessoaConsultorio"
+          optionLabel="pesNome"
+          [(ngModel)]="objPessoaConsultorio"
+          [style]="{width: '100%'}"
+          [filter]="true"
+          filterBy="pesNome"
+          [showClear]="true"
+          (onChange)="GetCarteiraByCPF(objPessoaConsultorio.pesCPF);"
+          ></p-dropdown>
+      </div>
+      <!-- TIPO DE CIRURGIA -->
+      <div class="field col-12 md:col-5">
+        <label for="tipoCirurgia">Tipo de Cirurgia</label><br>
+        <p-dropdown
+        placeholder="Selecione"
+        id="tipoCirurgia"
+        [options]="lstTipoCirurgia"
+        optionLabel="TpcDesc"
+        [(ngModel)]="objTipoCirurgia"
+        [style]="{width: '100%'}"
+        [filter]="true"
+        filterBy="TpcDesc"
+        [showClear]="true"
+        ></p-dropdown>
+      </div>
+      <!-- MÉDICO -->
+      <div class="field col-12 md:col-5">
+        <label for="medico">Médico</label><br>
+        <p-dropdown
+        placeholder="Selecione"
+        id="medico"
+        [options]="lstMedicoConsultorio"
+        optionLabel="pesNome"
+        [(ngModel)]="objMedicoConsultorio"
+        [style]="{width: '100%'}"
+        [filter]="true"
+        filterBy="pesNome"
+        [showClear]="true"
+        ></p-dropdown>
+      </div>
+      <!-- HOSPITAL -->
+      <div class="field col-12 md:col-7">
+        <label for="hospital">Hospital</label><br>
+        <p-dropdown
+        placeholder="Selecione"
+        id="hospital"
+        [options]="lstHospitais"
+        optionLabel="HosDesc"
+        [(ngModel)]="objHospitais"
+        [style]="{width: '100%'}"
+        [filter]="true"
+        filterBy="HosDesc"
+        [showClear]="true"
+        ></p-dropdown>
+      </div>
+    </div>
+
+    <!-- BOTÕES -->
+    <div class="text-right">
+      <div *ngIf="!boolEditarSalvar" class="mt-3">
+        <p-button (onClick)="NovoRegistro();" label="Novo Registro" [raised]="true" size="small"/> &nbsp;
+        <p-button (onClick)="CancelaForm();" label="Cancelar" [raised]="true" severity="danger" size="small"/>
+      </div> &nbsp;
+      <p-button *ngIf="boolEditarSalvar" (onClick)="Salvar();" label="Salvar" [raised]="true" severity="success" size="small"/> &nbsp;
+      <p-button *ngIf="boolEditarSalvar" (onClick)="Cancelar();" label="Cancelar" [raised]="true" severity="danger" size="small"/>
+    </div>
+  </p-card>
+</div>
