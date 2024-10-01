@@ -147,7 +147,7 @@ export class PessoaComponent implements OnInit {
       this.http.GetPessoaByIdConsultorio(conCodi).subscribe({
         next: (response) => {
           this.listaPessoaConsultorio = response;
-          console.warn(this.listaPessoaConsultorio);
+          // console.warn(this.listaPessoaConsultorio);
           this.GetTipoDocumento();
         },
         error: (error) => {
@@ -496,7 +496,6 @@ export class PessoaComponent implements OnInit {
   }
 
   ExibirLink(pesCodi: number) {
-    console.warn(pesCodi);
     this.urlLinkCarteira = environment.linkExibirCarteira + this.base64Service.convertNumberToBase64(pesCodi);
     this.boolVisualizaLink = true;
   }

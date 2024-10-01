@@ -1,0 +1,13 @@
+body, app-root {
+  background-color: hsl(124, 100%, 97%); /* Cor de fundo global */
+  margin: 0;
+  padding: 0;
+  height: 100vh;
+}
+
+.centralizada {
+  text-align: center;
+  margin: auto;
+  height: 100%;
+  margin-top: 200px;
+}

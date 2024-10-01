@@ -1,3 +1,4 @@
+import { UtilitarioComponent } from './pages/utilitario/utilitario.component';
 import { ValidaCarteiraComponent } from './pages/valida-carteira/valida-carteira.component';
 import { RouterModule, Routes } from '@angular/router';
 import { CarteiraBariatricaComponent } from './pages/carteira-bariatrica/carteira-bariatrica.component';
@@ -16,6 +17,7 @@ export const routes: Routes = [
   { path: 'pessoa', component: PessoaComponent },
   { path: 'consultorio', component: ConsultorioComponent },
   { path: 'cadastro-carteira', component: CadastroCarteiraComponent },
+  { path: 'utilitario', component: UtilitarioComponent },
   { path: '**', redirectTo: 'login' }
 ];
 

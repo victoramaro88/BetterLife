@@ -115,7 +115,7 @@ export class CadastroCarteiraComponent implements OnInit {
         next: (response) => {
           //-> Filtrando apenas os pacientes nessa consulta.
           this.lstPessoaConsultorio = response.filter(p => p.tipDesc === 'Paciente');
-          console.warn(this.lstPessoaConsultorio);
+          // console.warn(this.lstPessoaConsultorio);
         },
         error: (error) => {
           console.error('Erro ao carregar dados:', error);
@@ -147,13 +147,13 @@ export class CadastroCarteiraComponent implements OnInit {
   }
 
   GetCarteiraByCPF(docNume: string) {
-    console.warn(docNume);
+    // console.warn(docNume);
     this.blockLoading = true;
     try {
       this.http.GetCarteiraByCPF(docNume).subscribe({
         next: (response) => {
           this.objCarteira = response;
-          console.warn(this.objCarteira);
+          // console.warn(this.objCarteira);
           this.blockLoading = false;
         },
         error: (error) => {

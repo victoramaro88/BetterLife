@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Base64Service } from '../../services/base64.service';
 import { HttpService } from '../../services/http-service.service';
@@ -10,13 +10,15 @@ import { ImportsModule } from '../../imports';
   standalone: true,
   imports: [ImportsModule],
   templateUrl: './valida-carteira.component.html',
-  styleUrl: './valida-carteira.component.css'
+  styleUrl: './valida-carteira.component.css',
+  encapsulation: ViewEncapsulation.None
 })
 export class ValidaCarteiraComponent implements OnInit {
 
   blockLoading: boolean = true;
   objCarteira: CarteiraBariatricaModel = new CarteiraBariatricaModel();
   docNume: string = '';
+  validacaoCarteira: boolean = false;
 
   constructor(
     private route: ActivatedRoute,
@@ -28,19 +30,16 @@ export class ValidaCarteiraComponent implements OnInit {
   ngOnInit(): void {
     this.route.queryParams.subscribe(params => {
       this.docNume = params['data'];
-      console.log(this.docNume);
+      // console.log(this.docNume);
       if (this.docNume) {
         this.ValidaCarteira(this.base64Service.decodeBase64ToString(this.docNume));
       }
-
-
-
       // console.info("Validada!", this.base64Service.decodeBase64ToString(param));
     });
   }
 
   ValidaCarteira(docNume: string) {
-    console.info(docNume);
+    // console.info(docNume);
     this.GetCarteiraByCPF(docNume);
   }
 
@@ -49,11 +48,14 @@ export class ValidaCarteiraComponent implements OnInit {
       this.http.GetCarteiraByCPF(docNume).subscribe({
         next: (response) => {
           this.objCarteira = response;
-
+          console.warn("Carteira", this.objCarteira);
+          this.validacaoCarteira = true;
           this.blockLoading = false;
         },
         error: (error) => {
-          console.error('Erro ao carregar dados:', error);
+          // console.error('Erro ao carregar dados:', error);
+          this.validacaoCarteira = false;
+          this.blockLoading = false;
           // this.msgs = [];
           // this.messageService.add({severity:'error', summary:'Erro: ', detail: error.message});
         }
