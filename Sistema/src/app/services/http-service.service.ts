@@ -1,3 +1,4 @@
+import { CarteiraModel } from './../models/Carteira.model';
 import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
@@ -27,6 +28,10 @@ export class HttpService {
 
   public GetCarteiraByCPF(docNume: string): Observable<CarteiraBariatricaModel> {
     return this.http.get<CarteiraBariatricaModel>(`${environment.apiServicos}/CarteiraBariatrica/GetCarteiraByCPF/${docNume}`);
+  }
+
+  public GetCarteiraById(carCodi: number): Observable<CarteiraModel> {
+    return this.http.get<CarteiraModel>(`${environment.apiServicos}/CarteiraBariatrica/GetCarteiraById/${carCodi}`);
   }
 
   public GetCarteiraByConsultorio(conCodi: number): Observable<CarteiraByConsultorioModel[]> {
@@ -65,6 +70,10 @@ export class HttpService {
     return this.http.get<any>(`${environment.apiServicos}/Pessoa/GetPessoaById/${pesCodi}`);
   }
 
+  public GetPessoaByCPF(cpf: string): Observable<any> {
+    return this.http.get<any>(`${environment.apiServicos}/Pessoa/GetPessoaByCPF/${cpf}`);
+  }
+
   public AlteraStatusPessoa(pesCodi: number, statusAtual: boolean): Observable<string> {
     return this.http.get<string>(`${environment.apiServicos}/Pessoa/AlteraStatusPessoa/${pesCodi}/${statusAtual}`);
   }
@@ -101,6 +110,10 @@ export class HttpService {
 
   public PostConsultorio(objConsultorio: ConsultorioModel): Observable<string> {
     return this.http.post<string>(`${environment.apiServicos}/Consultorio`, objConsultorio);
+  }
+
+  public PostCarteira(objCarteira: CarteiraModel): Observable<string> {
+    return this.http.post<string>(`${environment.apiServicos}/CarteiraBariatrica/PostCarteira`, objCarteira);
   }
 
   public ValidarLogin(usuario: string, senha: string): Observable<UsuarioLogadoModel> {

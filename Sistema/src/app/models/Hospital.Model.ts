@@ -1,11 +1,11 @@
 export class HospitalModel {
-  hosCodi: number;
-  hosDesc: string;
-  hosStat: boolean;
+  HosCodi: number;
+  HosDesc: string;
+  HosStat: boolean;
 
   constructor() {
-    this.hosCodi = 0;
-    this.hosDesc = "";
-    this.hosStat = false;
+    this.HosCodi = 0;
+    this.HosDesc = "";
+    this.HosStat = false;
   }
 }

@@ -250,11 +250,25 @@ export class PessoaComponent implements OnInit {
           if (this.objDocumento.TidCodi === 1) { //-> CPF
             let cpfValido: boolean = this.utils.ValidarCpf(this.objDocumento.DocNume);
             if (cpfValido) {
-              this.lstDocumento.push(this.objDocumento);
-              this.RetornaNomeDoc(this.objDocumento.TidCodi);
+              //-> VERIFICANDO SE O DOCUMENTO JÁ EXISTE NA BASE DE DADOS.
+              this.http.GetPessoaByCPF(this.objDocumento.DocNume).subscribe({
+                next: (response) => {
+                  if (response.PesCodi > 0) {
+                    this.messageService.add({severity:'warn', summary:'Atenção: ', detail: 'CPF já cadastrado no sistema.'});
+                  }
+                },
+                error: (error) => { //-> SE DER ERRO, É PORQUE NÃO ENCONTROU O REGISTRO.
+                  if (error.status === 404) {
+                    this.lstDocumento.push(this.objDocumento);
+                    this.RetornaNomeDoc(this.objDocumento.TidCodi);
 
-              this.objDocumento = new DocumentoModel();
-              this.objTipoDocumento = new TipoDocumentoModel();
+                    this.objDocumento = new DocumentoModel();
+                    this.objTipoDocumento = new TipoDocumentoModel();
+                  } else {
+                    console.error('Erro ao carregar dados:', error);
+                  }
+                }
+              });
             } else {
               this.messageService.add({severity:'warn', summary:'Atenção: ', detail: 'Número de CPF inválido.'});
             }
@@ -483,6 +497,25 @@ export class PessoaComponent implements OnInit {
       this.messageService.add({severity:'warn', summary:'Atenção: ', detail: 'Insira um nome.'});
       return false;
     }
+  }
+
+  ValidaCPFExistente(cpf: string) {
+    let valida: boolean = false;
+    try {
+      this.http.GetPessoaByCPF(cpf).subscribe({
+        next: (response) => {
+          console.warn("TipoPessoa:", response);
+          valida = response.PesCodi > 0 ? true : false;
+        },
+        error: (error) => {
+          console.error('Erro ao carregar dados:', error);
+        }
+      });
+    } catch (error) {
+      console.error(error);
+    }
+
+    return valida;
   }
 
   RetornaNomeDoc(TidCodi: number) {

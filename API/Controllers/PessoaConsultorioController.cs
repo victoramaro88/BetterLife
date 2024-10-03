@@ -67,12 +67,15 @@ namespace API_BetterLife.Controllers
                     var query = from pessoa in context.Pessoas
                                 join pessoaConsultorio in context.PessoaConsultorios
                                 on pessoa.PesCodi equals pessoaConsultorio.PesCodi
-                                where pessoaConsultorio.ConCodi == conCodi && pessoa.TipCodi == 1
+                                join documento in context.Documentos
+                                on pessoa.PesCodi equals documento.PesCodi
+                                where pessoaConsultorio.ConCodi == conCodi && pessoa.TipCodi == 1 && documento.TidCodi == 2
                                 select new
                                 {
                                     pesCodi = pessoa.PesCodi,
                                     pecCodi = pessoaConsultorio.PecCodi,
-                                    pesNome = pessoa.PesNome
+                                    pesNome = pessoa.PesNome,
+                                    crm = documento.DocNume
                                 };
                     var list = query.ToList();
 

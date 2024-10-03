@@ -18,7 +18,9 @@ namespace API_BetterLife.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<TipoCirurgium>>> GetTipoCirurgias()
         {
-            return Ok(await _context.TipoCirurgia.ToListAsync());
+            return Ok(await _context.TipoCirurgia
+                .OrderBy(tc => tc.TpcDesc)
+                .ToListAsync());
         }
 
         [HttpGet("{tpcCodi}")]

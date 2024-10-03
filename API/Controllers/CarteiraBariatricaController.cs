@@ -21,6 +21,43 @@ namespace API_BetterLife.Controllers
             return Ok(await _context.CarteiraBariatricas.ToListAsync());
         }
 
+        [HttpGet("{carCodi}")]
+        public Task<ActionResult<IEnumerable<CarteiraBariatrica>>> GetCarteiraById(long carCodi)
+        {
+            try
+            {
+                using (var context = new AppDbContext())
+                {
+                    var query = from carteira in context.CarteiraBariatricas
+                                where carteira.CarCodi == carCodi
+                                select new
+                                {
+                                    carCodi = carteira.CarCodi,
+                                    carDtCi = carteira.CarDtCi,
+                                    tpcCodi = carteira.TpcCodi,
+                                    hosCodi = carteira.HosCodi,
+                                    pesCodi = carteira.PesCodi,
+                                    pecCodi = carteira.PecCodi,
+                                    carStat = carteira.CarStat
+                                };
+
+                    var result = query.FirstOrDefault();
+
+                    if (result != null)
+                    {
+                        return Task.FromResult<ActionResult<IEnumerable<CarteiraBariatrica>>>(Ok(result));
+                    }
+                }
+
+                return Task.FromResult<ActionResult<IEnumerable<CarteiraBariatrica>>>(NotFound());
+            }
+            catch (Exception ex)
+            {
+                return Task.FromResult<ActionResult<IEnumerable<CarteiraBariatrica>>>(
+                    BadRequest(ex.Message + " \n " + ex.InnerException?.Message));
+            }
+        }
+
         [HttpGet("{docNume}")]
         public Task<ActionResult<IEnumerable<CarteiraBariatrica>>> GetCarteiraByCPF(string docNume)
         {

@@ -12,14 +12,9 @@ export const environment = {
 
 /*-> INFORMAÇÕES SOBRE LINKS PARA VALIDAR CARTEIRA:
 URL DIRETO PARA A CARTEIRA:
-http://localhost:4200/carteira?data=<CPF_Base64>
+http://localhost:4200/carteira?data=MTIzNDU2Nzg5MDA%3D
 
 URL PARA VALIDAÇÃO DA CARTEIRA:
-localhost:4200/valida/<CPF_Base64>
-*/
-
-
-/*
-http://localhost:4200/carteira?data=MTIzNDU2Nzg5MDA%3D
 http://localhost:4200/valida?data=MTIzNDU2Nzg5MDA%3D
 */
+

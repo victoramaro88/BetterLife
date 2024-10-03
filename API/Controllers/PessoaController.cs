@@ -57,6 +57,26 @@ namespace API_BetterLife.Controllers
             return Ok(pessoa);
         }
 
+        [HttpGet("{cpf}")]
+        public async Task<ActionResult<Pessoa>> GetPessoaByCPF(string cpf)
+        {
+            var pessoa = await _context.Pessoas
+                .Join(_context.Documentos,
+                    pes => pes.PesCodi,
+                    doc => doc.PesCodi,
+                    (pes, doc) => new { pes.PesCodi, pes.PesNome, doc.DocNume, doc.TidCodi })
+                .Where(joined => joined.DocNume == cpf
+                                 && joined.TidCodi == 1)
+                .FirstOrDefaultAsync();
+
+            if (pessoa == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(pessoa);
+        }
+
         [HttpPost]
         public async Task<ActionResult<string>> InserirPessoa(PessoaDTO pessoaDTO)
         {

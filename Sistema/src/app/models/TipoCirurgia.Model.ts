@@ -1,11 +1,11 @@
 export  class TipoCirurgia {
-  tpcCodi: number;
-  tpcDesc: string;
-  tpcStat: boolean;
+  TpcCodi: number;
+  TpcDesc: string;
+  TpcStat: boolean;
 
   constructor() {
-    this.tpcCodi = 0;
-    this.tpcDesc = "";
-    this.tpcStat = false;
+    this.TpcCodi = 0;
+    this.TpcDesc = "";
+    this.TpcStat = false;
   }
 }
