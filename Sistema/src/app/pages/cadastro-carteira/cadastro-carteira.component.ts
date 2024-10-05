@@ -219,7 +219,9 @@ export class CadastroCarteiraComponent implements OnInit {
     this.blockLoading = true;
     this.objManterCarteira.tpcCodi = this.objTipoCirurgia.TpcCodi;
     this.objManterCarteira.hosCodi = this.objHospitais.HosCodi;
-    this.objManterCarteira.pesCodi = this.objPessoaConsultorio.pesCodi;
+    if(!this.boolEditar){
+      this.objManterCarteira.pesCodi = this.objPessoaConsultorio.pesCodi;
+    }
     this.objManterCarteira.pecCodi = this.objMedicoConsultorio.pecCodi;
     this.objManterCarteira.carStat = true;
 
@@ -227,24 +229,35 @@ export class CadastroCarteiraComponent implements OnInit {
       console.warn("OK");
       console.warn("Carteira:", this.objManterCarteira);
       try {
+        //-> Se o pesCodi for igual a 0, insere, senão, altera.
         if (this.objManterCarteira.carCodi === 0) {
-          console.warn('INSERE O REGISTRO');
-          // this.http.PostCarteira(this.objManterCarteira).subscribe({
-          //   next: (response) => {
-          //     console.warn(response);
-          //     this.messageService.add({ severity: 'success', summary: 'Sucesso!', detail: 'Carteira salva com sucesso!' });
-          //     this.blockLoading = false;
-          //     this.Cancelar();
-          //   },
-          //   error: (error) => {
-          //     // console.error('Erro ao carregar dados:', error);
-          //     this.messageService.add({severity:'error', summary:'Erro:', detail: 'Falha ao realizar a operação.'});
-          //     this.boolCarteiraExistente = false;
-          //     this.blockLoading = false;
-          //   }
-          // });
+          this.http.PostCarteira(this.objManterCarteira).subscribe({
+            next: (response) => {
+              this.messageService.add({ severity: 'success', summary: 'Sucesso!', detail: 'Carteira salva com sucesso!' });
+              this.blockLoading = false;
+              this.Cancelar();
+            },
+            error: (error) => {
+              // console.error('Erro ao carregar dados:', error);
+              this.messageService.add({severity:'error', summary:'Erro:', detail: 'Falha ao realizar a operação.'});
+              this.boolCarteiraExistente = false;
+              this.blockLoading = false;
+            }
+          });
         } else {
-          console.warn('ALTERA O REGISTRO');
+          this.http.PutCarteira(this.objManterCarteira.carCodi, this.objManterCarteira).subscribe({
+            next: (response) => {
+              this.messageService.add({ severity: 'success', summary: 'Sucesso!', detail: 'Carteira salva com sucesso!' });
+              this.blockLoading = false;
+              this.Cancelar();
+            },
+            error: (error) => {
+              // console.error('Erro ao carregar dados:', error);
+              this.messageService.add({severity:'error', summary:'Erro:', detail: 'Falha ao realizar a operação.'});
+              this.boolCarteiraExistente = false;
+              this.blockLoading = false;
+            }
+          });
         }
       } catch (error) {
         console.error(error);

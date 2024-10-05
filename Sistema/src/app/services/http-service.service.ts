@@ -129,6 +129,10 @@ export class HttpService {
   public PutConsultorio(conCodi: number, objConsultorio: ConsultorioModel): Observable<string> {
     return this.http.put<string>(`${environment.apiServicos}/Consultorio/${conCodi}`, objConsultorio);
   }
+
+  public PutCarteira(carCodi: number, objCarteira: CarteiraModel): Observable<string> {
+    return this.http.put<string>(`${environment.apiServicos}/CarteiraBariatrica/PutCarteira/${carCodi}`, objCarteira);
+  }
   // #endregion
 
 }
