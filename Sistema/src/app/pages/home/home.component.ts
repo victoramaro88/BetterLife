@@ -4,11 +4,12 @@ import { ImportsModule } from '../../imports';
 import { Router } from '@angular/router';
 import { UsuarioLogadoModel } from '../../models/UsuarioLogado.Model';
 import { CryptoService } from '../../services/crypto.service';
+import { CabecalhoComponent } from "../cabecalho/cabecalho.component";
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [ImportsModule],
+  imports: [ImportsModule, CabecalhoComponent],
   templateUrl: './home.component.html',
   styleUrl: './home.component.css'
 })
@@ -34,18 +35,19 @@ export class HomeComponent implements OnInit {
         },
         {
           label: 'Consultórios',
-          route: '/consultorio'
+          route: '/consultorio',
+          visible: this.ValidaPermissao('Menu Cadastro de Consultório')
         },
         {
           label: 'Carteira',
           route: '/cadastro-carteira'
         },
-        {
-          label: 'Logout',
-          command: () => {
-            this.logout();
-          },
-        }
+        // {
+        //   label: 'Logout',
+        //   command: () => {
+        //     this.logout();
+        //   },
+        // }
       ];
   }
 
@@ -59,5 +61,10 @@ export class HomeComponent implements OnInit {
     });
 
     this.router.navigate(['/login']);
+  }
+
+  ValidaPermissao(perDesc: string) {
+    let perm = this.novoObjUsr.lstPermissoes.find(p => p.PerDesc === perDesc)?.PerAtiv;
+    return perm;
   }
 }

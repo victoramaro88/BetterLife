@@ -48,8 +48,16 @@ export class ValidaCarteiraComponent implements OnInit {
       this.http.GetCarteiraByCPF(docNume).subscribe({
         next: (response) => {
           this.objCarteira = response;
-          console.warn("Carteira", this.objCarteira);
-          this.validacaoCarteira = true;
+          // console.warn("Carteira", this.objCarteira);
+          this.http.GetPessoaByCPF(docNume).subscribe({
+            next: (response) => {
+              // console.warn("TipoPessoa:", response);
+              this.validacaoCarteira = response.PesStat ? true : false;;
+            },
+            error: (error) => {
+              console.error('Erro ao carregar dados:', error);
+            }
+          });
           this.blockLoading = false;
         },
         error: (error) => {

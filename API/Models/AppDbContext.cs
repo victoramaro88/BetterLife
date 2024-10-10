@@ -22,6 +22,7 @@ namespace API_BetterLife.Models
         public virtual DbSet<Documento> Documentos { get; set; } = null!;
         public virtual DbSet<Genero> Generos { get; set; } = null!;
         public virtual DbSet<Hospital> Hospitals { get; set; } = null!;
+        public virtual DbSet<Permissao> Permissaos { get; set; } = null!;
         public virtual DbSet<Pessoa> Pessoas { get; set; } = null!;
         public virtual DbSet<PessoaConsultorio> PessoaConsultorios { get; set; } = null!;
         public virtual DbSet<PessoaContato> PessoaContatos { get; set; } = null!;
@@ -38,11 +39,14 @@ namespace API_BetterLife.Models
             {
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
                 optionsBuilder.UseSqlServer("Data Source=victoramaro.com.br, 11433;Initial Catalog=DB_BetterLife;User ID=BetterLifeUsr;Password=B37738$#=lY0)@;Connection Timeout=600;");
+                //optionsBuilder.UseSqlServer("Data Source=victoramaro.com.br, 11433;Initial Catalog=DB_BetterLife_Prod;User ID=BetterLifeUsrPrd;Password=Jsd943#@1jf0;Connection Timeout=600;");
             }
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.UseCollation("Latin1_General_CI_AS");
+
             modelBuilder.Entity<CarteiraBariatrica>(entity =>
             {
                 entity.HasKey(e => e.CarCodi)
@@ -214,6 +218,35 @@ namespace API_BetterLife.Models
                     .HasColumnName("hosDesc");
 
                 entity.Property(e => e.HosStat).HasColumnName("hosStat");
+            });
+
+            modelBuilder.Entity<Permissao>(entity =>
+            {
+                entity.HasKey(e => e.PerCodi)
+                    .HasName("PK__Permissa__AD53245676E0FBFB");
+
+                entity.ToTable("Permissao", "dbo");
+
+                entity.Property(e => e.PerCodi)
+                    .ValueGeneratedNever()
+                    .HasColumnName("perCodi");
+
+                entity.Property(e => e.PerAtiv).HasColumnName("perAtiv");
+
+                entity.Property(e => e.PerDesc)
+                    .HasMaxLength(500)
+                    .IsUnicode(false)
+                    .HasColumnName("perDesc");
+
+                entity.Property(e => e.PerStat).HasColumnName("perStat");
+
+                entity.Property(e => e.TusCodi).HasColumnName("tusCodi");
+
+                entity.HasOne(d => d.TusCodiNavigation)
+                    .WithMany(p => p.Permissaos)
+                    .HasForeignKey(d => d.TusCodi)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("fk_PesCodiTusCodi");
             });
 
             modelBuilder.Entity<Pessoa>(entity =>

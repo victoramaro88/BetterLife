@@ -23,6 +23,7 @@ export class CarteiraBariatricaComponent implements OnInit {
   docNume: string = '';
   blockLoading: boolean = true;
   mensagemRespCarteira: string = "";
+  pesStat: boolean = false;
 
   constructor(
     private qrCodeService: QRCodeService
@@ -60,6 +61,19 @@ export class CarteiraBariatricaComponent implements OnInit {
       this.http.GetCarteiraByCPF(docNume).subscribe({
         next: (response) => {
           this.objCarteira = response;
+          console.warn("Carteira:", this.objCarteira);
+          this.http.GetPessoaByCPF(this.objCarteira.docNume).subscribe({
+            next: (response) => {
+              console.warn("TipoPessoa:", response);
+              this.pesStat = response.PesStat > 0 ? true : false;
+              if (!this.pesStat) {
+                this.mensagemRespCarteira = "Carteira Inválida!";
+              }
+            },
+            error: (error) => {
+              console.error('Erro ao carregar dados:', error);
+            }
+          });
 
           this.blockLoading = false;
           this.mensagemRespCarteira = "";

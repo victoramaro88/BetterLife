@@ -1,10 +1,11 @@
+<app-cabecalho></app-cabecalho>
 <p-blockUI [blocked]="blockLoading">
   <i class="pi pi-spin pi-spinner-dotted" style="font-size: 3rem"></i>
 </p-blockUI>
 <p-toast />
 
 <div class="container">
-  <p-card header="Pessoas - Consultório" class="card">
+  <p-card header="Pessoas" class="card">
     <!-- GRID DAS PESSOAS -->
     <p-table
     *ngIf="!boolEditarSalvar"
@@ -34,14 +35,14 @@
               <td style="text-align: center;">{{ item.tipDesc }}</td>
               <td style="text-align: center;">{{ item.pesStat ? 'Ativo' : 'Inativo' }}</td>
               <td style="text-align: center;">
-                <p-button (onClick)="ExibirLink(item.pesCPF);"
+                <!-- <p-button (onClick)="ExibirLink(item.pesCPF);"
                 *ngIf="item.tipDesc === 'Paciente'"
                 pTooltip="Link da Carteira"
                 tooltipPosition="left"
                 icon="pi pi-id-card"
                 [rounded]="true"
                 [text]="true"
-                severity="info" />
+                severity="info" /> -->
 
                 <p-button (onClick)="GetPessoaById(item.pesCodi);"
                 pTooltip="Editar"

@@ -5,7 +5,7 @@ https://go.microsoft.com/fwlink/?LinkID=208121.
 <Project>
   <PropertyGroup>
     <_PublishTargetUrl>D:\_PROJETOS\Amaro\Publish\BetterLife</_PublishTargetUrl>
-    <History>True|2024-10-01T16:12:33.0868994Z;True|2024-08-13T12:56:17.3966024-03:00;True|2024-08-08T07:14:50.4542026-03:00;True|2024-08-08T07:13:38.3516625-03:00;</History>
+    <History>True|2024-10-09T10:54:55.7223866Z;True|2024-10-09T07:43:42.6497965-03:00;True|2024-10-09T07:33:20.4830743-03:00;True|2024-10-09T07:27:00.6010267-03:00;True|2024-10-08T13:59:28.1980854-03:00;True|2024-10-01T13:12:33.0868994-03:00;True|2024-08-13T12:56:17.3966024-03:00;True|2024-08-08T07:14:50.4542026-03:00;True|2024-08-08T07:13:38.3516625-03:00;</History>
     <LastFailureDetails />
   </PropertyGroup>
 </Project>

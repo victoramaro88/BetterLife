@@ -63,11 +63,27 @@ namespace API_BetterLife.Controllers
                         return Task.FromResult<ActionResult<UsuarioLogadoModel>>(NotFound("Consultório não localizado."));
                     }
 
+                    var objPermissoes = (from per in _context.Permissaos
+                                              join tu in _context.TipoUsuarios on per.TusCodi equals tu.TusCodi
+                                              join up in _context.UsuarioPessoas on tu.TusCodi equals up.TusCodi
+                                              join pes in _context.Pessoas on up.PesCodi equals pes.PesCodi
+                                              where up.UsuCodi == objUsuario.UsuCodi
+                                              orderby per.PerDesc
+                                              select new PermissaoDTOModel
+                                              {
+                                                  PerCodi = per.PerCodi,
+                                                  PerDesc = per.PerDesc,
+                                                  PerAtiv = per.PerAtiv,
+                                                  PerStat = per.PerStat,
+                                                  TusCodi = tu.TusCodi
+                                              }).ToList();
+
                     result.usuCodi = objUsuario.UsuCodi;
                     result.pesCodi = objPessoa.PesCodi;
                     result.pesNome = objPessoa.PesNome;
-                    result.pecCodi = objPessoaConsultorio != null? objPessoaConsultorio!.PecCodi : 0;
+                    result.pecCodi = objPessoaConsultorio != null ? objPessoaConsultorio!.PecCodi : 0;
                     result.conCodi = objConsultorio != null ? objConsultorio.ConCodi : 0;
+                    result.lstPermissoes = objPermissoes;
 
                     return Task.FromResult<ActionResult<UsuarioLogadoModel>>(Ok(result));
                 }

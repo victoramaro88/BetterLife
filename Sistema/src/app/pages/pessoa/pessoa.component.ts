@@ -1,3 +1,4 @@
+import { CabecalhoComponent } from './../cabecalho/cabecalho.component';
 import { Base64Service } from './../../services/base64.service';
 import { environment } from './../../../environments/environment';
 import { Component, OnInit } from '@angular/core';
@@ -23,7 +24,7 @@ import { LoginModel } from '../../models/Login.Model';
 @Component({
   selector: 'app-pessoa',
   standalone: true,
-  imports: [ImportsModule, FormsModule],
+  imports: [ImportsModule, FormsModule, CabecalhoComponent],
   templateUrl: './pessoa.component.html',
   styleUrl: './pessoa.component.css',
   providers: [MessageService]
@@ -504,7 +505,7 @@ export class PessoaComponent implements OnInit {
     try {
       this.http.GetPessoaByCPF(cpf).subscribe({
         next: (response) => {
-          console.warn("TipoPessoa:", response);
+          // console.warn("TipoPessoa:", response);
           valida = response.PesCodi > 0 ? true : false;
         },
         error: (error) => {

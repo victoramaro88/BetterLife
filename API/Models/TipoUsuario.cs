@@ -7,6 +7,7 @@ namespace API_BetterLife.Models
     {
         public TipoUsuario()
         {
+            Permissaos = new HashSet<Permissao>();
             UsuarioPessoas = new HashSet<UsuarioPessoa>();
         }
 
@@ -14,6 +15,7 @@ namespace API_BetterLife.Models
         public string TusDesc { get; set; } = null!;
         public bool TusStat { get; set; }
 
+        public virtual ICollection<Permissao> Permissaos { get; set; }
         public virtual ICollection<UsuarioPessoa> UsuarioPessoas { get; set; }
     }
 }

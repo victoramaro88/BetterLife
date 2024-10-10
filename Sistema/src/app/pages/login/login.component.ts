@@ -57,6 +57,26 @@ export class LoginComponent implements OnInit {
           // console.warn(this.cryptoService.lerDoSessionStorage("usr"));
           this.router.navigate(['/home']);
           this.boolLoading = false;
+
+          // this.http.GetPermissaoByTusCodi(this.objUsuarioLogado.).subscribe({
+          //   next: (responsePermissao) => {
+          //     console.warn('Permissões:', responsePermissao);
+          //     this.cryptoService.salvarNoSessionStorage("perm", JSON.stringify(responsePermissao));
+          //     // console.warn(this.cryptoService.lerDoSessionStorage("usr"));
+          //     this.router.navigate(['/home']);
+          //     this.boolLoading = false;
+          //   },
+          //   error: (error) => {
+          //     this.boolLoading = false;
+          //     if(error.error ==='Senha incorreta.') {
+          //       this.messageService.add({severity:'error', summary:'Erro: ', detail: error.error});
+          //     } else if(error.error ==='Usuário não encontrado.') {
+          //       this.messageService.add({severity:'error', summary:'Erro: ', detail: error.error});
+          //     } else {
+          //       this.messageService.add({severity:'error', summary:'Erro: ', detail: error.message});
+          //     }
+          //   }
+          // });
         },
         error: (error) => {
           this.boolLoading = false;

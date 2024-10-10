@@ -64,7 +64,8 @@ namespace API_BetterLife.Controllers
                 .Join(_context.Documentos,
                     pes => pes.PesCodi,
                     doc => doc.PesCodi,
-                    (pes, doc) => new { pes.PesCodi, pes.PesNome, doc.DocNume, doc.TidCodi })
+                    (pes, doc) => new { pes.PesCodi, pes.PesNome, pes.PesStat, doc.DocNume, doc.TidCodi }
+                    )
                 .Where(joined => joined.DocNume == cpf
                                  && joined.TidCodi == 1)
                 .FirstOrDefaultAsync();

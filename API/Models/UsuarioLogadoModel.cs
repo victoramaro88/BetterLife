@@ -8,5 +8,7 @@
         public int pecCodi { get; set; }
         public int conCodi { get; set; }
 
+        public List<PermissaoDTOModel>? lstPermissoes { get; set; }
+
     }
 }

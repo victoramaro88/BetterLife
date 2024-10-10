@@ -1,3 +1,4 @@
+import { PermissaoModel } from './../models/Permissao.Model';
 import { CarteiraModel } from './../models/Carteira.model';
 import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { Injectable } from '@angular/core';
@@ -96,6 +97,10 @@ export class HttpService {
 
   public GetMedicoByConsultorio(conCodi: number): Observable<MedicoConsultorioModel[]> {
     return this.http.get<MedicoConsultorioModel[]>(`${environment.apiServicos}/PessoaConsultorio/GetMedicoByConsultorio/${conCodi}`);
+  }
+
+  public GetPermissaoByTusCodi(tusCodi: number): Observable<PermissaoModel[]> {
+    return this.http.get<PermissaoModel[]>(`${environment.apiServicos}/Permissao/GetPermissaoByTusCodi/${tusCodi}`);
   }
 
   // #endregion

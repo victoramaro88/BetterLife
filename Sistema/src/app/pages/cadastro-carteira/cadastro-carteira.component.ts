@@ -1,3 +1,4 @@
+import { CabecalhoComponent } from './../cabecalho/cabecalho.component';
 import { Component, OnInit } from '@angular/core';
 import { HttpService } from '../../services/http-service.service';
 import { Utils } from '../../services/utils';
@@ -20,7 +21,7 @@ import { environment } from '../../../environments/environment';
 @Component({
   selector: 'app-cadastro-carteira',
   standalone: true,
-  imports: [ImportsModule, FormsModule],
+  imports: [ImportsModule, FormsModule, CabecalhoComponent],
   templateUrl: './cadastro-carteira.component.html',
   styleUrl: './cadastro-carteira.component.css',
   providers: [MessageService]
@@ -226,8 +227,7 @@ export class CadastroCarteiraComponent implements OnInit {
     this.objManterCarteira.carStat = true;
 
     if (this.ValidaInformacoes()) {
-      console.warn("OK");
-      console.warn("Carteira:", this.objManterCarteira);
+      // console.warn("Carteira:", this.objManterCarteira);
       try {
         //-> Se o pesCodi for igual a 0, insere, senão, altera.
         if (this.objManterCarteira.carCodi === 0) {

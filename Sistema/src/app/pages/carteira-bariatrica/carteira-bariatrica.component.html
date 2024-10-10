@@ -4,7 +4,7 @@
 
 <div class="card-wrapper">
   <div class="card-container">
-    <div *ngIf="mensagemRespCarteira == '' && true ; else elseBlock" [class]="{'flipped': isFlipped}" class="card-flip">
+    <div *ngIf="mensagemRespCarteira == ''; else elseBlock" [class]="{'flipped': isFlipped}" class="card-flip">
       <div class="card-front">
         <div class="flex flex-column">
           <div class="flex align-items-center justify-content-center">
