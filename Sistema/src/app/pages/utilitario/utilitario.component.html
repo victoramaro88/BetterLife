@@ -1,0 +1,12 @@
+<div>
+  <!-- <input type="text" pInputText [(ngModel)]="cpf" /> -->
+
+  <p-inputMask
+  mask="999.999.999-99"
+  [(ngModel)]="cpf"
+  placeholder="000.000.000-00" />
+  &nbsp;
+  <p-button (onClick)="ConverterCPFBase64();" label="Converter" />
+  <br>
+  {{cpfBase64}}
+</div>

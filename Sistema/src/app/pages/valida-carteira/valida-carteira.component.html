@@ -1,0 +1,42 @@
+<p-blockUI [blocked]="blockLoading">
+  <i class="pi pi-spin pi-spinner-dotted" style="font-size: 3rem"></i>
+</p-blockUI>
+
+<div *ngIf="blockLoading; else elseBlockLoading">
+  <div class="centralizada">
+    <h3>Carregando...</h3>
+  </div>
+</div>
+<ng-template #elseBlockLoading>
+  <div *ngIf="validacaoCarteira; else elseBlock" class="centralizada">
+    <i class="pi pi-check" style="font-size: 4rem; color: #019f33"></i>
+    <h3>Carteira Válida!</h3>
+    <p>
+      <strong> Clínica:</strong> {{objCarteira.conDesc}}
+    </p>
+    <p>
+      <strong> Médico(a):</strong> {{objCarteira.medicoNome}}
+    </p>
+    <p>
+      <strong> CRM:</strong> {{objCarteira.crmMedico}}
+    </p>
+    <!-- <hr style="size: 50px;"> -->
+     <br>
+     <p>
+       <strong> Paciente:</strong> {{objCarteira.pesNome}}
+     </p>
+     <p>
+       <strong> CPF:</strong> {{objCarteira.docNume}}
+     </p>
+  </div>
+
+  <ng-template #elseBlock>
+    <div class="centralizada">
+      <i class="pi pi-exclamation-triangle" style="font-size: 4rem; color: #e1d909"></i>
+      <h3>Carteira Inválida!</h3>
+      <p>
+        Contate sua clínica representante.
+      </p>
+    </div>
+  </ng-template>
+</ng-template>
