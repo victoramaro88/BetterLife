@@ -38,7 +38,8 @@ namespace API_BetterLife.Models
             if (!optionsBuilder.IsConfigured)
             {
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
-                optionsBuilder.UseSqlServer("Data Source=victoramaro.com.br, 11433;Initial Catalog=DB_BetterLife;User ID=BetterLifeUsr;Password=B37738$#=lY0)@;Connection Timeout=600;");
+                optionsBuilder.UseSqlServer("Data Source=betterlife.app.br, 11433;Initial Catalog=DB_BetterLife_Prod;User ID=BetterLifeUsrPrd;Password=Jsd943#@1jf0\r\n;Connection Timeout=600;");
+                //optionsBuilder.UseSqlServer("Data Source=betterlife.app.br, 11433;Initial Catalog=DB_BetterLife;User ID=BetterLifeUsrDSV;Password=B37738$#=lY0)@;Connection Timeout=600;");
                 //optionsBuilder.UseSqlServer("Data Source=victoramaro.com.br, 11433;Initial Catalog=DB_BetterLife_Prod;User ID=BetterLifeUsrPrd;Password=Jsd943#@1jf0;Connection Timeout=600;");
             }
         }

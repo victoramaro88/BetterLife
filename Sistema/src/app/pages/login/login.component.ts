@@ -1,3 +1,4 @@
+import { environment } from './../../../environments/environment';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
@@ -17,6 +18,7 @@ import { CryptoService } from '../../services/crypto.service';
 })
 export class LoginComponent implements OnInit {
 
+  version: string = "";
   formulario: FormGroup;
   boolLoading = false;
   objUsuarioLogado: UsuarioLogadoModel = new UsuarioLogadoModel();
@@ -32,6 +34,8 @@ export class LoginComponent implements OnInit {
       usr: ['', Validators.required],
       senha: ['', [Validators.required]]
     });
+
+    this.version = environment.version;
   }
 
   ngOnInit(): void {
@@ -57,26 +61,6 @@ export class LoginComponent implements OnInit {
           // console.warn(this.cryptoService.lerDoSessionStorage("usr"));
           this.router.navigate(['/home']);
           this.boolLoading = false;
-
-          // this.http.GetPermissaoByTusCodi(this.objUsuarioLogado.).subscribe({
-          //   next: (responsePermissao) => {
-          //     console.warn('Permissões:', responsePermissao);
-          //     this.cryptoService.salvarNoSessionStorage("perm", JSON.stringify(responsePermissao));
-          //     // console.warn(this.cryptoService.lerDoSessionStorage("usr"));
-          //     this.router.navigate(['/home']);
-          //     this.boolLoading = false;
-          //   },
-          //   error: (error) => {
-          //     this.boolLoading = false;
-          //     if(error.error ==='Senha incorreta.') {
-          //       this.messageService.add({severity:'error', summary:'Erro: ', detail: error.error});
-          //     } else if(error.error ==='Usuário não encontrado.') {
-          //       this.messageService.add({severity:'error', summary:'Erro: ', detail: error.error});
-          //     } else {
-          //       this.messageService.add({severity:'error', summary:'Erro: ', detail: error.message});
-          //     }
-          //   }
-          // });
         },
         error: (error) => {
           this.boolLoading = false;
@@ -85,7 +69,7 @@ export class LoginComponent implements OnInit {
           } else if(error.error ==='Usuário não encontrado.') {
             this.messageService.add({severity:'error', summary:'Erro: ', detail: error.error});
           } else {
-            this.messageService.add({severity:'error', summary:'Erro: ', detail: error.message});
+            this.messageService.add({severity:'error', summary:'Erro: ', detail: "Falha ao conectar com o servidor, contate o suporte."});
           }
         }
       });

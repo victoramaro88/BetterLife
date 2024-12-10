@@ -78,6 +78,8 @@ export class CadastroCarteiraComponent implements OnInit {
         },
         error: (error) => {
           console.error('Erro ao carregar dados:', error);
+          this.blockLoading = false;
+          this.messageService.add({severity:'error', summary:'Erro: ', detail: "Falha ao conectar com o servidor, contate o suporte."});
         }
       });
     } catch (error) {
@@ -94,6 +96,8 @@ export class CadastroCarteiraComponent implements OnInit {
         },
         error: (error) => {
           console.error('Erro ao carregar dados:', error);
+          this.blockLoading = false;
+          this.messageService.add({severity:'error', summary:'Erro: ', detail: "Falha ao conectar com o servidor, contate o suporte."});
         }
       });
     } catch (error) {
@@ -110,6 +114,8 @@ export class CadastroCarteiraComponent implements OnInit {
         },
         error: (error) => {
           console.error('Erro ao carregar dados:', error);
+          this.blockLoading = false;
+          this.messageService.add({severity:'error', summary:'Erro: ', detail: "Falha ao conectar com o servidor, contate o suporte."});
         }
       });
     } catch (error) {
@@ -128,6 +134,8 @@ export class CadastroCarteiraComponent implements OnInit {
         },
         error: (error) => {
           console.error('Erro ao carregar dados:', error);
+          this.blockLoading = false;
+          this.messageService.add({severity:'error', summary:'Erro: ', detail: "Falha ao conectar com o servidor, contate o suporte."});
         }
       });
     } catch (error) {
@@ -150,6 +158,8 @@ export class CadastroCarteiraComponent implements OnInit {
         },
         error: (error) => {
           console.error('Erro ao carregar dados:', error);
+          this.blockLoading = false;
+          this.messageService.add({severity:'error', summary:'Erro: ', detail: "Falha ao conectar com o servidor, contate o suporte."});
         }
       });
 
@@ -354,6 +364,14 @@ export class CadastroCarteiraComponent implements OnInit {
     } else {
       console.warn('Clipboard API não suportada');
       this.mensagem = 'Clipboard API não suportada neste navegador.';
+    }
+  }
+
+  AbrirNovaJanela() {
+    const url = this.urlLinkCarteira;
+    const novaJanela = window.open(url, '_blank');
+    if (!novaJanela) {
+      alert('Pop-up bloqueado pelo navegador. Por favor, permita pop-ups para abrir a nova janela.');
     }
   }
 }

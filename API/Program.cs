@@ -8,12 +8,31 @@ var builder = WebApplication.CreateBuilder(args);
 // Configuração do CORS
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowSpecificOrigin",
-        builder => builder
-            .WithOrigins("http://localhost:4200", "https://www.victoramaro.com.br/")
-            .AllowAnyHeader()
-            .AllowAnyMethod());
+    //options.AddPolicy("AllowSpecificOrigin", builder =>
+    //    builder
+    //        .WithOrigins(
+    //            "http://localhost:4200",
+    //            "https://www.victoramaro.com.br",
+    //            "https://www.betterlife.app.br",
+    //            "https://www.dev.betterlife.app.br"
+    //        )
+    //        .AllowAnyHeader()
+    //        .AllowAnyMethod());
+    options.AddPolicy("AllowSpecificOrigin", builder =>
+       builder
+           .SetIsOriginAllowed(origin =>
+           {
+               // Permitir todos os subdomínios de betterlife.app.br
+               return origin.EndsWith(".betterlife.app.br")
+               || origin == "https://www.betterlife.app.br"
+               || origin == "https://betterlife.app.br"
+               || origin == "http://localhost:4200"
+               ;
+           })
+           .AllowAnyHeader()
+           .AllowAnyMethod());
 });
+
 
 // Configuração de banco de dados e outros serviços
 var connectionString = builder.Configuration.GetConnectionString("CONEXAO_BD");

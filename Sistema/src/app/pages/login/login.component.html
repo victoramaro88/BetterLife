@@ -21,6 +21,9 @@
         </div>
         <br>
         <button pButton pRipple label="Entrar" icon="pi pi-user" class="w-full mt-2" type="submit" [disabled]="!formulario.valid"></button>
+        <div class="text-center mt-3">
+          <span style="font-size: 0.7em;">Versão: {{version.split("|")[0]}} - {{version.split("|")[2]}}</span>
+        </div>
       </div>
     </div>
   </div>

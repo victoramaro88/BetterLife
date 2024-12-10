@@ -64,6 +64,6 @@ body {
 
 .rounded-image {
   border-radius: 15px; /* ajuste o valor conforme necessário */
-  width: 80px; /* ajuste o valor conforme necessário */
+  width: 70px; /* ajuste o valor conforme necessário */
   height: auto; /* manter proporção da imagem */
 }
